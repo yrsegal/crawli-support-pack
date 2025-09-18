@@ -12,7 +12,7 @@ class Game_System
     end
     if se != nil && se.name != ""
       se.name = File.basename(se.name, File.extname(se.name))
-      path = File.join(__dir__[Dir.pwd.length+1..]}, "Sounds/"+se.name)
+      path = File.join(__dir__[Dir.pwd.length+1..], "Sounds/"+se.name)
       if FileTest.audio_exist?(path)
         internal_se_play(path, self.resolve_volume(se.volume), se.pitch, x, y, z)
       end
@@ -22,7 +22,7 @@ class Game_System
   def accessible_bgs_play(bgs)
     @playing_bgs = bgs==nil ? nil : bgs.clone
     if bgs != nil && bgs.name != ""
-      path = File.join(__dir__[Dir.pwd.length+1..]}, "BGSounds/"+bgs.name)
+      path = File.join(__dir__[Dir.pwd.length+1..], "BGSounds/"+bgs.name)
       if FileTest.audio_exist?(path)
         Audio.bgs_play(path, self.resolve_volume(bgs.volume), bgs.pitch)
       end
@@ -61,7 +61,7 @@ def pbAccessibilitySEPlay(param, volume = nil, pitch = nil, x: 0, y: 0, z: 0)
         return
       end
     end
-    internal_se_play(canonicalize(File.join(__dir__[Dir.pwd.length+1..]}, "Sounds/"+param.name)), param.volume, param.pitch, x, y, z)
+    internal_se_play(canonicalize(File.join(__dir__[Dir.pwd.length+1..], "Sounds/"+param.name)), param.volume, param.pitch, x, y, z)
   end
 end
 
@@ -89,7 +89,7 @@ def pbAccessibilityBGSPlay(param,volume=nil,pitch=nil)
         b.play; return
       end
     end
-    Audio.bgs_play(canonicalize(File.join(__dir__, "BGSounds/"+param.name)),param.volume,param.pitch)
+    Audio.bgs_play(canonicalize(File.join(__dir__[Dir.pwd.length+1..], "BGSounds/"+param.name)),param.volume,param.pitch)
   end
 end
 
