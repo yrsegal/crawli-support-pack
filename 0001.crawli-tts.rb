@@ -9,7 +9,7 @@ if System.platform[/Windows/]
       tolk.call(message.encode('utf-16le'), interrupt)
     }
   else
-  dllloc = File.join(__dir__, 'nvdaControllerClient.dll')
+    dllloc = File.join(__dir__, 'nvdaControllerClient.dll')
     if File.exist?(dllloc)
       nvdaSpeak = Win32API.new(dllloc, 'nvdaController_speakText', 'p', 'v')
       nvdaCancel = Win32API.new(dllloc, 'nvdaController_cancelSpeech', '', 'v')
