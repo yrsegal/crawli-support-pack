@@ -20,11 +20,13 @@ if System.platform[/Windows/]
     end
   end
 elsif System.platform[/Mac/] || System.platform[/macOS/]
+
+  Process.kill(:SIGINT, $TTS_CURRENT_PID) if defined?($TTS_CURRENT_PID) && $TTS_CURRENT_PID != -1
   $TTS_CURRENT_PID = -1
   $tts = ->(message, interrupt) {
     Process.kill(:SIGINT, $TTS_CURRENT_PID) if interrupt && $TTS_CURRENT_PID != -1
     Process.wait($TTS_CURRENT_PID) if !interrupt && $TTS_CURRENT_PID != -1
-    $TTS_CURRENT_PID = Process.spawn("say --quality 0 #{message.gsub(/"\$/, '').inspect}")
+    $TTS_CURRENT_PID = Process.spawn("say -r 200 --quality 0 #{message.gsub(/["\$\r]/, '').inspect}")
   }
 end
 

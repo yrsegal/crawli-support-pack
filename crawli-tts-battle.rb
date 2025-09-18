@@ -746,11 +746,18 @@ class PokeBattle_Scene
     if !zmove
       ppphrase = sprintf(", %d out of %d pp left", move.pp, move.totalpp)
     end
-    if pbFieldNotesBattle(move) == 1
-      fieldboostphrase = ", field-boosted"
-    elsif pbFieldNotesBattle(move) == 2
-      fieldboostphrase = ", field-diminished"
+    fm = @sprites["fightwindow"]
+    if fm && fm.buttons
+      if fm.buttons.pbFieldNotesBattle(move) == 1
+        fieldboostphrase = ", field-boosted"
+      elsif fm.buttons.pbFieldNotesBattle(move) == 2
+        fieldboostphrase = ", field-diminished"
+      end
     end
     tts(sprintf("%s, %s%s type%s%s", name, move.pbType(battler).name, secondtypephrase, ppphrase, fieldboostphrase))
   end
+end
+
+class FightMenuDisplay
+  attr_reader :buttons
 end
