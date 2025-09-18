@@ -29,6 +29,7 @@ class PokemonOptionScene
             @sprites["textbox"].text=@sprites["option"].options[@sprites["option"].index].description
            end
            ### MODDED/
+           opt = @sprites["option"].options[@sprites["option"].index]
            if opt.name != lastread
              tts(opt.name)
              opt.current(@sprites["option"][@sprites["option"].index])
