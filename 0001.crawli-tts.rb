@@ -1,5 +1,5 @@
 if System.platform[/Windows/]
-  dllloc = File.join(__dir__, 'libTolk.dll')
+  dllloc = File.join(__dir__[Dir.pwd.length+1..]}, 'libTolk.dll')
   if File.exist?(dllloc)
     # Windows Speech API needs to be enabled explicitly. Uncomment this line to do so.
     # Win32API.new('libTolk.dll', 'Tolk_TrySAPI', 'b', 'v').call(true)
@@ -9,7 +9,7 @@ if System.platform[/Windows/]
       tolk.call(message.encode('utf-16le'), interrupt)
     }
   else
-    dllloc = File.join(__dir__, 'nvdaControllerClient.dll')
+    dllloc = File.join(__dir__[Dir.pwd.length+1..]}, 'nvdaControllerClient.dll')
     if File.exist?(dllloc)
       nvdaSpeak = Win32API.new(dllloc, 'nvdaController_speakText', 'p', 'v')
       nvdaCancel = Win32API.new(dllloc, 'nvdaController_cancelSpeech', '', 'v')
