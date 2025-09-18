@@ -58,20 +58,20 @@ class PokemonLoadScene
     Graphics.update
   end
 
-  def pbChoose(commands)
-    @sprites["cmdwindow"].commands = commands
-    lastread = nil ### MODDED
-    loop do
-      Graphics.update
-      Input.update
-      tts(commands[@sprites["cmdwindow"].index]) if @sprites["cmdwindow"].index != lastread  ### MODDED
-      lastread = @sprites["cmdwindow"].index  ### MODDED
-      pbUpdate
-      if Input.trigger?(Input::C) && (!@saveselecting || @saveselecting == false)
-        return @sprites["cmdwindow"].index
-      end
-    end
-  end
+  # def pbChoose(commands)
+  #   @sprites["cmdwindow"].commands = commands
+  #   lastread = nil ### MODDED
+  #   loop do
+  #     Graphics.update
+  #     Input.update
+  #     tts(commands[@sprites["cmdwindow"].index]) if @sprites["cmdwindow"].index != lastread  ### MODDED
+  #     lastread = @sprites["cmdwindow"].index  ### MODDED
+  #     pbUpdate
+  #     if Input.trigger?(Input::C) && (!@saveselecting || @saveselecting == false)
+  #       return @sprites["cmdwindow"].index
+  #     end
+  #   end
+  # end
 end
 
 class PokemonSaveScene

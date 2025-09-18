@@ -760,4 +760,37 @@ end
 
 class FightMenuDisplay
   attr_reader :buttons
+
+  def initialize(battler,viewport=nil)
+    @display=nil
+    if PBScene::USEFIGHTBOX
+      @display=IconSprite.new(0,Graphics.height-96,viewport)
+      @display.setBitmap("Graphics/Pictures/Battle/battleFight")
+    end
+    @window=Window_CommandPokemon.newWithSize([],0,Graphics.height-96,320,96,viewport)
+    @window.notts ### MODDED
+    @window.columns=2
+    @window.columnSpacing=4
+    @window.ignore_input=true
+    pbSetNarrowFont(@window.contents)
+    @info=Window_AdvancedTextPokemon.newWithSize(
+       "",320,Graphics.height-96,Graphics.width-320,96,viewport)
+    pbSetNarrowFont(@info.contents)
+    @ctag=shadowctag(PBScene::MENUBASE,
+                     PBScene::MENUSHADOW)
+    @buttons=nil
+    @battler=battler
+    @index=0
+    @megaButton=0 # 0=don't show, 1=show, 2=pressed
+    @ultraButton=0 # 0=don't show, 1=show, 2=pressed
+    @zButton=0    # 0=don't show, 1=show, 2=pressed
+    if PBScene::USEFIGHTBOX
+      @window.opacity=0
+      @window.x=Graphics.width
+      @info.opacity=0
+      @info.x=Graphics.width+Graphics.width-96
+      @buttons=FightMenuButtons.new(self.index,nil,viewport)
+    end
+    refresh
+  end
 end

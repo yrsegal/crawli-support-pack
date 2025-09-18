@@ -1,5 +1,3 @@
-# https://github.com/fclorenzo/pkreborn-access
-
 def pbFishing(hasencounter,rodtype=1)
   basebitechance=50
   bitechance=basebitechance+(15*rodtype)   # 65, 80, 95
