@@ -42,22 +42,27 @@ class PokemonOptions
   end
 end
 
-class << PokemonOptionScene
-  alias :crawlioptions_old_new :new
+class PokemonOptionScene
 
-  def new(*args, **kwargs)
+  if !defined?(self.crawlioptions_old_new)
+    class <<self
+      alias_method :crawlioptions_old_new, :new
+    end
+  end
+
+  def self.new(*args, **kwargs)
     if BlindstepActive
       optionCommands = []
       optionCommands.push(_INTL("General"))
       optionCommands.push(_INTL("Accessibility"))
       option = Kernel.pbMessage(_INTL("What options do you want to see?"), optionCommands)
       if option == 0
-        return crawlioptions_old_new(*args, **kwargs)
+        return self.crawlioptions_old_new(*args, **kwargs)
       else
         return PokemonBlindstepOptionScene.new(*args, **kwargs)
       end
     else
-      return crawlioptions_old_new(*args, **kwargs)
+      return self.crawlioptions_old_new(*args, **kwargs)
     end
   end
 end
@@ -131,6 +136,15 @@ class PokemonBlindstepOptionScene
 
   def pbOptions
     pbActivateWindow(@sprites,"option"){
+      ### MODDED/
+      lastread = nil
+      if @sprites["option"].options
+        opt = @sprites["option"].options[0]
+        tts(opt.name)
+        opt.current(@sprites["option"][0])
+        lastread = opt.name
+      end
+      ### /MODDED
        loop do
          Graphics.update
          Input.update
@@ -148,6 +162,14 @@ class PokemonBlindstepOptionScene
            else
             @sprites["textbox"].text=@sprites["option"].options[@sprites["option"].index].description
            end
+           ### MODDED/
+           if opt.name != lastread
+             tts(opt.name)
+             opt.current(@sprites["option"][@sprites["option"].index])
+             tts(@sprites["textbox"].text)
+             lastread = opt.name
+           end
+           ### /MODDED
          end
          if Input.trigger?(Input::B)
           saveClientData
