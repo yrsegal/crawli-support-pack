@@ -67,6 +67,7 @@ class Scene_Map
         ### MODDED/
         message = sprintf("X %d, Y %d, map %d, %s", $game_player.x, $game_player.y, $game_map.map_id, $game_map.name)
         tts(message, true)
+        pbWait(30)
         ### /MODDED
         if Kernel.pbConfirmMessage(_INTL("Would you like to save the game?"))
           if pbSave

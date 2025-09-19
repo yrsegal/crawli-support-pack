@@ -55,4 +55,24 @@ class PokemonSummaryScene
     end
     return (ret==4) ? -1 : ret
   end
+  def moveToString(move, moveobj)
+    movedata = $cache.moves[move]
+    string = getMoveName(move)
+    string += ", " + movedata.type.name + " type, "
+    string += movedata.category.to_s.capitalize + ", "
+    if movedata.category != :status
+      if movedata.basedamage == 1
+        string += "Unknown power, "
+      else
+        string += movedata.basedamage.to_s + " power, "
+      end
+    end
+    if movedata.accuracy == 0
+      string += "Perfect accuracy, "
+    else
+      string += movedata.accuracy.to_s + " accuracy, "
+    end
+    string += moveobj.pp.to_s + " out of " + moveobj.totalpp.to_s + " PP, "
+    string += movedata.desc
+  end
 end
