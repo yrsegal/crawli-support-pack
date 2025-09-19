@@ -388,6 +388,60 @@ def Kernel.pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=ni
   return ret
 end
 
+def pbChooseNumberCentered(params)
+  return 0 if !params
+
+  ret = 0
+  maximum = params.maxNumber
+  minimum = params.minNumber
+  defaultNumber = params.initialNumber
+  cancelNumber = params.cancelNumber
+  cmdwindow = Window_InputNumberPokemon.new(params.maxDigits)
+  cmdwindow.x = Graphics.width / 2 - 68
+  cmdwindow.y = Graphics.height / 2 - 36
+  cmdwindow.z = 99999
+  cmdwindow.visible = true
+  cmdwindow.sign = params.negativesAllowed # must be set before number
+  cmdwindow.number = defaultNumber
+  curnumber = defaultNumber
+  command = 0
+  ### MODDED/
+  lastread = cmdwindow.number
+  tts(cmdwindow.number.to_s)
+  ### /MODDED
+  loop do
+    Graphics.update
+    Input.update
+    pbUpdateSceneMap
+    cmdwindow.update
+    ### MODDED/
+    if lastread != cmdwindow.number
+      tts(cmdwindow.number.to_s)
+      lastread = cmdwindow.number
+    end
+    ### /MODDED
+    yield if block_given?
+    if Input.trigger?(Input::C)
+      ret = cmdwindow.number
+      if ret > maximum
+        pbPlayBuzzerSE()
+      elsif ret < minimum
+        pbPlayBuzzerSE()
+      else
+        pbPlayDecisionSE()
+        break
+      end
+    elsif Input.trigger?(Input::B)
+      pbPlayCancelSE()
+      ret = cancelNumber
+      pbWait(2)
+      break
+    end
+  end
+  cmdwindow.dispose
+  Input.update
+  return ret
+end
 
 def pbChooseNumber(msgwindow,params)
   return 0 if !params

@@ -73,6 +73,42 @@ class SpriteWindow_Selectable
   end
 end
 
+class Window_AdvancedCommandPokemon
+  alias :crawlittscommands_old_initialize :initialize
+
+  def initialize(commands,width=nil,tts:true)
+    @tts=tts
+    crawlittscommands_old_initialize(commands,width)
+    Kernel.tts(toUnformattedText(@commands[0])) if @commands && @commands[0] && @tts
+  end
+
+  def self.newWithSize(commands,x,y,width,height,viewport=nil,tts:true)
+    ret=self.new(commands,width,tts:tts)
+    ret.setHW_XYZ(height,width,x,y)
+    ret.viewport=viewport
+    return ret
+  end
+
+  def self.newEmpty(x,y,width,height,viewport=nil,tts: true)
+    ret=self.new([],width,tts:tts)
+    ret.setHW_XYZ(height,width,x,y)
+    ret.viewport=viewport
+    return ret
+  end
+
+  def commands=(value)
+    @commands = value
+    Kernel.tts(@commands[0]) if @commands && @commands[0] && @tts
+    @item_max = commands.length
+    self.update_cursor_rect
+    self.refresh
+  end
+
+  def item_changed
+    super
+    Kernel.tts(toUnformattedText(@commands[self.index])) if @commands && @tts
+  end
+end
 
 class Window_CommandPokemon
   alias :crawlittscommands_old_initialize :initialize

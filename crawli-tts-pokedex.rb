@@ -215,7 +215,7 @@ class PokemonPokedexScene
     pbPlayCry(formPoke)
     ### MODDED/
     tts(speciesInt.to_s)
-    tts(getMonName(species, form))
+    tts(getMonName(species))
     if $Trainer.pokedex.dexList[species][:owned?]
       tts(kind + " Pokémon")
       if type2 != nil
@@ -425,6 +425,14 @@ class PokemonPokedexScene
 
   def pbPokedex
     pbActivateWindow(@sprites,"pokedex"){
+       ### MODDED/
+       iconspecies=@sprites["pokedex"].species
+      if iconspecies.nil?
+        tts("#{@sprites["pokedex"].index + 1}: Unknown")
+      else
+        tts("#{$cache.pkmn[iconspecies].dexnum}: #{getMonName(iconspecies)}")
+      end
+      ### /MODDED
        loop do
          Graphics.update
          Input.update
@@ -471,7 +479,7 @@ class PokemonPokedexScene
           if iconspecies.nil?
             tts("#{@sprites["pokedex"].index + 1}: Unknown")
           else
-            tts("#{$cache.pkmn[iconspecies, lastForm].dexnum}: #{getMonName(iconspecies)}")
+            tts("#{$cache.pkmn[iconspecies].dexnum}: #{getMonName(iconspecies)}")
           end
           ### /MODDED
          end
@@ -486,153 +494,63 @@ class PokemonPokedexScene
            if $Trainer.pokedex.dexList[@sprites["pokedex"].species][:seen?]
              pbPlayDecisionSE()
              pbDexEntry(@sprites["pokedex"].index)
+           ### MODDED/
+          if iconspecies.nil?
+            tts("#{@sprites["pokedex"].index + 1}: Unknown")
+          else
+            tts("#{$cache.pkmn[iconspecies].dexnum}: #{getMonName(iconspecies)}")
+          end
+          ### /MODDED
            end
          elsif Input.trigger?(Input::Y)
            pbPlayDecisionSE()
            pbDexSearch
+           ### MODDED/
+           iconspecies=@sprites["pokedex"].species
+           if iconspecies.nil?
+              tts("#{@sprites["pokedex"].index + 1}: Unknown")
+            else
+              tts("#{$cache.pkmn[iconspecies].dexnum}: #{getMonName(iconspecies)}")
+            end
+          ### /MODDED
          end
        end
     }
   end
 end
-class PokemonNestMapScene
-    def pbStartScene(species,regionmap=-1)
-    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
-    @viewport.z=99999
-    @sprites={}
-    mappos=$cache.mapdata[$game_map.map_id].MapPosition
-    region=regionmap
-    if region<0                                    # Use player's current region
-      region=mappos ? mappos[0] : 0                           # Region 0 default
-    end
-    @sprites["background"]=IconSprite.new(0,0,@viewport)
-    @sprites["background"].setBitmap(_INTL("Graphics/Pictures/Pokedex/pokedexNest"))
-    if !Reborn
-      if $game_switches[AdvancedPokedexScene::SWITCH]
-        @sprites["dexbar"]=IconSprite.new(0,0,@viewport)
-        @sprites["dexbar"].setBitmap(_INTL("Graphics/Pictures/Pokedex/advancedPokedexNestBar"))
-      end
-    end
-    @sprites["map"]=IconSprite.new(0,0,@viewport)
-    @sprites["map"].setBitmap("Graphics/Pictures/#{$cache.town_map[region][1]}")
-    @sprites["map"].x+=(Graphics.width-@sprites["map"].bitmap.width)/2
-    @sprites["map"].y+=(Graphics.height-@sprites["map"].bitmap.height)/2
-    for hidden in REGIONMAPEXTRAS
-      if hidden[0]==region && hidden[1]>0 && $game_switches[hidden[1]]
-        if !@sprites["map2"]
-          @sprites["map2"]=BitmapSprite.new(480,320,@viewport)
-          @sprites["map2"].x=@sprites["map"].x; @sprites["map2"].y=@sprites["map"].y
-        end
-        pbDrawImagePositions(@sprites["map2"].bitmap,[
-           ["Graphics/Pictures/#{hidden[4]}",
-              hidden[2]*PokemonRegionMapScene::SQUAREWIDTH,
-              hidden[3]*PokemonRegionMapScene::SQUAREHEIGHT,0,0,-1,-1]
-        ])
-      end
-    end
-    @point=BitmapWrapper.new(PokemonRegionMapScene::SQUAREWIDTH+4,
-                             PokemonRegionMapScene::SQUAREHEIGHT+4)
-    @point.fill_rect(0,0,
-                     PokemonRegionMapScene::SQUAREWIDTH+4,
-                     PokemonRegionMapScene::SQUAREHEIGHT+4,Color.new(255,0,0))
-    @point2=BitmapWrapper.new(PokemonRegionMapScene::SQUAREWIDTH+4,
-                              PokemonRegionMapScene::SQUAREHEIGHT+4)
-    @point2.fill_rect(4,0,
-                      PokemonRegionMapScene::SQUAREWIDTH,
-                      PokemonRegionMapScene::SQUAREHEIGHT+4,Color.new(255,0,0))
-    @point3=BitmapWrapper.new(PokemonRegionMapScene::SQUAREWIDTH+4,
-                              PokemonRegionMapScene::SQUAREHEIGHT+4)
-    @point3.fill_rect(0,4,
-                      PokemonRegionMapScene::SQUAREWIDTH+4,
-                      PokemonRegionMapScene::SQUAREHEIGHT,Color.new(255,0,0))
-    @point4=BitmapWrapper.new(PokemonRegionMapScene::SQUAREWIDTH+4,
-                              PokemonRegionMapScene::SQUAREHEIGHT+4)
-    @point4.fill_rect(4,4,
-                      PokemonRegionMapScene::SQUAREWIDTH,
-                      PokemonRegionMapScene::SQUAREHEIGHT,Color.new(255,0,0))
-    points=[]
-    mapwidth=1+PokemonRegionMapScene::RIGHT-PokemonRegionMapScene::LEFT
-    for mapid in 1...$cache.mapdata.length
-      if pbFindEncounter(mapid,species)
-        mappos=$cache.mapdata[mapid].MapPosition
-        if mappos && mappos[0]==region
-          showpoint=true
-          #for loc in $cache.town_map[region][2]
-          #  showpoint=false if loc[0]==mappos[1] && loc[1]==mappos[2] && loc[7] && !$game_switches[loc[7]]
-          #end
-          if showpoint
-            mapsize=$cache.mapdata[mapid].MapSize
-            if mapsize && mapsize[0] && mapsize[0]>0
-              sqwidth=mapsize[0]
-              sqheight=(mapsize[1].length*1.0/mapsize[0]).ceil
-              for i in 0...sqwidth
-                for j in 0...sqheight
-                  if mapsize[1][i+j*sqwidth,1].to_i>0
-                    points[mappos[1]+i+(mappos[2]+j)*mapwidth]=true
-                  end
-                end
-              end
-            else
-              points[mappos[1]+mappos[2]*mapwidth]=true
-            end
-          end
-        end
-      end
-    end
-    enclist = shortEncounterList(enclist) ### MODDED
-    i=0
-    for j in 0...points.length
-      if points[j]
-        s=SpriteWrapper.new(@viewport)
-        s.x=(j%mapwidth)*PokemonRegionMapScene::SQUAREWIDTH-2
-        s.x+=(Graphics.width-@sprites["map"].bitmap.width)/2
-        s.y=(j/mapwidth)*PokemonRegionMapScene::SQUAREHEIGHT-2
-        s.y+=(Graphics.height-@sprites["map"].bitmap.height)/2
-        if j>=1 && points[j-1]
-          if j>=mapwidth && points[j-mapwidth]
-            s.bitmap=@point4
-          else
-            s.bitmap=@point2
-          end
-        else
-          if j>=mapwidth && points[j-mapwidth]
-            s.bitmap=@point3
-          else
-            s.bitmap=@point
-          end
-        end
-        @sprites["point#{i}"]=s
-        i+=1
-      end
-    end
-    @numpoints=i
-    @sprites["mapbottom"]=MapBottomSprite.new(@viewport)
-    @sprites["mapbottom"].maplocation=pbGetMessage(MessageTypes::RegionNames,region)#kill this
-    @sprites["mapbottom"].mapdetails=_INTL("{1}'s nest",getMonName(species))
-    tts("#{getMonName(species)}'s nest:") ### MODDED
-    if points.length==0
-      @sprites["mapbottom"].nonests=true
-      ### MODDED/
-      tts("Area Unknown")
-    else
-      for a in enclist
-        tts(a)
-      end
-    end
-    ### /MODDED
 
-    return true
-  end
+class AdvancedPokedexScene
 
-  def shortEncounterList(enclist)
-    for i in 0..enclist.length
-      enclist[i] = enclist[i].gsub(/\sB?[0-9]+F/, "") if enclist[i]
+   def pageInfo(page)
+    @sprites["overlay"].bitmap.clear
+    textpos = []
+    for i in (12*(page-1))...(12*page)
+      line = i%6
+      column = i/6
+      next if !@infoArray[column][line]
+      x = BASE_X+EXTRA_X*(column%2)
+      y = BASE_Y+EXTRA_Y*line
+      tts(@infoArray[column][line]) ### MODDED
+      textpos.push([@infoArray[column][line],x,y,false,BASECOLOR,SHADOWCOLOR])
     end
-    enclist.uniq!
-    enclist.delete("REMOVED")
-    return enclist
-  end
-
+     pbDrawTextPositions(@sprites["overlay"].bitmap,textpos)
+  end  
+   
+   def pageMoves(movesArray,label,page)
+    @sprites["overlay"].bitmap.clear
+    tts(label)
+    textpos = [[label,BASE_X,BASE_Y,false,BASECOLOR,SHADOWCOLOR]]
+     for i in (10*(page-1))...(10*page)
+      break if i>=movesArray.size
+      line = i%5
+      column = i/5
+      x = BASE_X+EXTRA_X*(column%2)
+      y = BASE_Y+EXTRA_Y*(line+1)
+      tts(movesArray[i]) ### MODDED
+      textpos.push([movesArray[i],x,y,false,BASECOLOR,SHADOWCOLOR])
+    end
+     pbDrawTextPositions(@sprites["overlay"].bitmap,textpos)
+  end  
 end
 
 class PokedexForm
