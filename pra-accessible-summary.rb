@@ -7,7 +7,7 @@ def pbPokemonScreen
     @scene.pbStartScene(@party, @party.length > 1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."), nil)
     loop do
       @scene.pbSetHelpText(@party.length > 1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."))
-      pkmnid = @scene.pbChoosePokemon(false, true, shortcut_keys: true)
+      pkmnid = @scene.pbChoosePokemon(false, true)
       if pkmnid.is_a?(Array) && pkmnid[0] == 1 # Switch
         @scene.pbSetHelpText(_INTL("Move to where?"))
         oldpkmnid = pkmnid[1]
@@ -222,6 +222,70 @@ def pbPokemonScreen
     return nil
   end
 end
+
+### WIRE'S CODE: pokemonData
+
+class MonData
+  def pokemonData
+    return PokemonDexData.new(self)
+  end
+end
+
+class PokemonDexData
+  def initialize(data)
+    @data = data
+  end
+
+  def [](formname)
+    formData = @data.formData
+    if formData
+      return FakeMonData.new(@data, formData)
+    else
+      return @data
+    end
+  end
+end
+
+class FakeMonData
+  def initialize(data, formData)
+    @data = data
+    @formData = formData
+  end
+
+  def mon; @formData[:mon] || @data.mon; end
+  def name; @formData[:name] || @data.name; end
+  def dexnum; @formData[:dexnum] || @data.dexnum; end
+  def Type1; @formData[:Type1] || @data.Type1; end
+  def Type2; @formData[:Type2] || @data.Type2; end
+  def BaseStats; @formData[:BaseStats] || @data.BaseStats; end
+  def EVs; @formData[:EVs] || @data.EVs; end
+  def Abilities; @formData[:Abilities] || @data.Abilities; end
+  def GrowthRate; @formData[:GrowthRate] || @data.GrowthRate; end
+  def GenderRatio; @formData[:GenderRatio] || @data.GenderRatio; end
+  def BaseEXP; @formData[:BaseEXP] || @data.BaseEXP; end
+  def CatchRate; @formData[:CatchRate] || @data.CatchRate; end
+  def Happiness; @formData[:Happiness] || @data.Happiness; end
+  def EggSteps; @formData[:EggSteps] || @data.EggSteps; end
+  def EggMoves; @formData[:EggMoves] || @data.EggMoves; end
+  def Moveset; @formData[:Moveset] || @data.Moveset; end
+  def compatiblemoves; @formData[:compatiblemoves] || @data.compatiblemoves; end
+  def moveexceptions; @formData[:moveexceptions] || @data.moveexceptions; end
+  def shadowmoves; @formData[:shadowmoves] || @data.shadowmoves; end
+  def Color; @formData[:Color] || @data.Color; end
+  def Habitat; @formData[:Habitat] || @data.Habitat; end
+  def EggGroups; @formData[:EggGroups] || @data.EggGroups; end
+  def Height; @formData[:Height] || @data.Height; end
+  def Weight; @formData[:Weight] || @data.Weight; end
+  def kind; @formData[:kind] || @data.kind; end
+  def dexentry; @formData[:dexentry] || @data.dexentry; end
+  def BattlerPlayerY; @formData[:BattlerPlayerY] || @data.BattlerPlayerY; end
+  def BattlerEnemyY; @formData[:BattlerEnemyY] || @data.BattlerEnemyY; end
+  def BattlerAltitude; @formData[:BattlerAltitude] || @data.BattlerAltitude; end
+  def preevo; @formData[:preevo] || @data.preevo; end
+  def evolutions; @formData[:evolutions] || @data.evolutions; end
+end
+
+
 
 # Accessible Summary Screen Functions
 def pbDisplayBSTData(pkmn,defaultMoveID=0)
@@ -782,82 +846,76 @@ end
 class PokeBattle_Scene
   # This is a full replacement of the pbSwitch method from Battle_Scene.rb
   # It is a copy of the original, with our new option safely injected.
-  def pbSwitch(index, lax, cancancel)
-    party = @battle.pbParty(index)
-    partypos = @battle.partyorder
-    ret = -1
+
+  def pbSwitch(index,lax,cancancel)
+    party=@battle.pbParty(index)
+    partypos=@battle.partyorder
+    ret=-1
+    # Fade out and hide all sprites
+#    visiblesprites=pbFadeOutAndHide(@sprites)
     pbShowWindow(BLANK)
     pbSetMessageMode(true)
-    modparty = []
-    posmod = @battle.pbIsDoubleBattler?(index) ? 6 : 0
-    for i in posmod...(posmod + 6)
+    modparty=[]
+    for i in 0...6
       modparty.push(party[partypos[i]])
     end
-    visiblesprites = pbFadeOutAndHide(@sprites)
-    scene = PokemonScreen_Scene.new
-    @switchscreen = PokemonScreen.new(scene, modparty)
-    @switchscreen.pbStartScene(_INTL("Choose a Pokémon."), @battle.doublebattle && !@battle.fullparty1)
-    tts("Choose a Pokémon.")
+    visiblesprites=pbFadeOutAndHide(@sprites)
+    scene=PokemonScreen_Scene.new
+    @switchscreen=PokemonScreen.new(scene,modparty)
+    @switchscreen.pbStartScene(_INTL("Choose a Pokémon."),
+       @battle.doublebattle && !@battle.fullparty1)
     loop do
       scene.pbSetHelpText(_INTL("Choose a Pokémon."))
-      activecmd = @switchscreen.pbChoosePokemon(shortcut_keys: true)
-      if cancancel && activecmd == -1
-        ret = -1
+      activecmd=@switchscreen.pbChoosePokemon
+      if cancancel && activecmd==-1
+        ret=-1
         break
       end
-      if activecmd.is_a?(Array) && activecmd[0] == 3 # Summary from shortcut
-        scene.pbSummary(activecmd[1])
-        next
-      end
-      if activecmd >= 0 && !party[partypos[activecmd + posmod]].nil?
+      if activecmd>=0 && !party[partypos[activecmd]].nil?
         # --- MODIFICATION START ---
-        commands = []
-        cmdShift = -1
-        cmdSummary = -1
+        commands=[]
+        cmdShift=-1
+        cmdSummary=-1
         cmdAccessibleSummary = -1 # Our new command variable
-        pkmnindex = partypos[activecmd + posmod]
-        
-        commands[cmdShift = commands.length] = _INTL("Switch In") if !party[pkmnindex].isEgg?
-        commands[cmdSummary = commands.length] = _INTL("Summary")
+        pkmnindex=partypos[activecmd]
+        commands[cmdShift=commands.length]=_INTL("Switch In") if !party[pkmnindex].isEgg?
         # Inject our command
         commands[cmdAccessibleSummary = commands.length] = _INTL("Accessible Summary") if !party[pkmnindex].isEgg?
-        commands[commands.length] = _INTL("Cancel")
-        
-        command = scene.pbShowCommands(_INTL("Do what with {1}?", party[pkmnindex].name), commands)
-        
-        if cmdShift >= 0 && command == cmdShift
-          canswitch = lax ? @battle.pbCanSwitchLax?(index, pkmnindex, true) : @battle.pbCanSwitch?(index, pkmnindex, true)
+        commands[cmdSummary=commands.length]=_INTL("Summary")
+        commands[commands.length]=_INTL("Cancel")
+        command=scene.pbShowCommands(_INTL("Do what with {1}?",party[pkmnindex].name),commands)
+        if cmdShift>=0 && command==cmdShift
+          canswitch = lax ? @battle.pbCanSwitchLax?(index,pkmnindex,true) : @battle.pbCanSwitch?(index,pkmnindex,true)
           if canswitch
-            ret = pkmnindex
+            ret=pkmnindex
             break
           end
-        elsif cmdSummary >= 0 && command == cmdSummary
+        elsif cmdSummary>=0 && command==cmdSummary
           scene.pbSummary(activecmd)
-elsif cmdAccessibleSummary != -1 && command == cmdAccessibleSummary
-        # Handle our command
-        loop do
-          sub_command = scene.pbShowCommands(_INTL("Accessible Summary"), [
-            _INTL("Display BST"),
-            _INTL("Pokemon Details"),
-            _INTL("Cancel")
-          ])
-          case sub_command
-          when 0; pbDisplayBSTData(party[pkmnindex])
-          when 1; torDisplayPokemonDetails(party[pkmnindex])
-          when -1, 2; break
+        elsif cmdAccessibleSummary != -1 && command == cmdAccessibleSummary
+          # Handle our command
+          loop do
+            sub_command = scene.pbShowCommands(_INTL("Accessible Summary"), [
+              _INTL("Display BST"),
+              _INTL("Pokemon Details"),
+              _INTL("Cancel")
+            ])
+            case sub_command
+            when 0; pbDisplayBSTData(party[pkmnindex])
+            when 1; torDisplayPokemonDetails(party[pkmnindex])
+            when -1, 2; break
+            end
           end
         end
-      end
         # --- MODIFICATION END ---
       end
     end
     @switchscreen.pbEndScene
-    @switchscreen = nil
+    @switchscreen=nil
     pbShowWindow(BLANK)
     pbSetMessageMode(false)
     # back to main battle screen
-    pbFadeInAndShow(@sprites, visiblesprites)
-    @battle.logSwitch(index, ret) if ret >= 0
+    pbFadeInAndShow(@sprites,visiblesprites)
     return ret
   end
 end
