@@ -43,7 +43,7 @@ def pbShowBattleStats(pkmn)
     report.push(_INTL("Form: {1}", form))
   end
   if $game_switches[:Blindstep]
-    if !(@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbOwnedByAIPartner?(pkmn.index)) && !@battle.opponent
+    if !(@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index)) && !@battle.opponent
       report.push(_INTL("Owned: {1}", $Trainer.pokedex.dexList[pkmn.species][:owned?] ? "Yes" : "No"))
     end
     report.push(_INTL("Gender: {1}", ["Male", "Female"][pkmn.gender])) if pkmn.gender < 2
@@ -65,12 +65,12 @@ def pbShowBattleStats(pkmn)
 
   stastr = [] # 0 = hp, 1 = atk, 2 = def, 3 = spa, 4 = spd, 5 = spe, 6 = acc, 7 = eva, 8 = crit
 
-  if ((@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbOwnedByAIPartner?(pkmn.index)) && @battle.doublebattle) || $DEBUG
+  if ((@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index)) && @battle.doublebattle) || $DEBUG
     stastr[0] = "HP:                           {1}/{2}"
   elsif $game_switches[:Blindstep]
     stastr[0] = "HP:                           #{(pkmn.hp.to_f / pkmn.totalhp.to_f * 1000).to_i / 10.0}%"
   end
-  if Rejuv || @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbOwnedByAIPartner?(pkmn.index) || $DEBUG
+  if Rejuv || @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index) || $DEBUG
     stastr[1] = "Attack:               "
     stastr[2] = "Defense:            "
     stastr[3] = "Sp.Attack:        "
@@ -80,7 +80,7 @@ def pbShowBattleStats(pkmn)
     stastr[7] = "Evasion:       {1}%"
   end
   for i in 1..5
-    stastr[i] += (@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbOwnedByAIPartner?(pkmn.index) || $DEBUG ? "{1}  " : "     ") if !stastr[i].nil?
+    stastr[i] += (@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index) || $DEBUG ? "{1}  " : "     ") if !stastr[i].nil?
   end
   for i in 1..7
     stastr[i] += " {2}{3}" if Rejuv
@@ -88,7 +88,7 @@ def pbShowBattleStats(pkmn)
   stastr[8] = "Crit. Rate:    {1}%    +{2}/3"
 
   report.push(_INTL(stastr[0], pkmn.hp, pkmn.totalhp)) if !stastr[0].nil?
-  if Rejuv || @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbOwnedByAIPartner?(pkmn.index) || $DEBUG
+  if Rejuv || @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index) || $DEBUG
     report.push(
       _INTL(stastr[1], pkmn.pbCalcAttack(), atksbl, pkmn.stages[PBStats::ATTACK]),
       _INTL(stastr[2], pkmn.pbCalcDefense(), defsbl, pkmn.stages[PBStats::DEFENSE]),
@@ -102,7 +102,7 @@ def pbShowBattleStats(pkmn)
   report.push(_INTL(stastr[8], crit, c))
   if !@battle.pbOwnedByPlayer?(pkmn.index)
     moves = pkmn.moves
-    if @battle.pbOwnedByAIPartner?(pkmn.index)
+    if @battle.pbIsDoubleBattler?(pkmn.index)
       # player should have access to partner moves
       report.push(_INTL("Moves Remaining:"))
     elsif $DEBUG
@@ -118,7 +118,7 @@ def pbShowBattleStats(pkmn)
     end
   end
 
-  if @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbOwnedByAIPartner?(pkmn.index) || $DEBUG
+  if @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index) || $DEBUG
     report.push(_INTL("Ability: {1}", pkmn.ability.nil? ? "Ability Negated" : getAbilityName(shownmon.ability)))
   end
   report.push(_INTL("Wonder Room Stat Swap active")) if pkmn.wonderroom == true

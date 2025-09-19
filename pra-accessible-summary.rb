@@ -789,7 +789,7 @@ class PokeBattle_Scene
     pbShowWindow(BLANK)
     pbSetMessageMode(true)
     modparty = []
-    posmod = @battle.pbOwnedByAIPartner?(index) ? 6 : 0
+    posmod = @battle.pbIsDoubleBattler?(index) ? 6 : 0
     for i in posmod...(posmod + 6)
       modparty.push(party[partypos[i]])
     end
