@@ -1,9 +1,35 @@
 class PokemonReadyMenu_Scene
 
-  alias :crawlittsreadymenu_old_pbStartScene :pbStartScene
   def pbStartScene(commands)
-    crawlittsreadymenu_old_pbStartScene(commands)
-    @sprites["cmdwindow"].notts
+    @commands = commands
+    @movecommands = []
+    @itemcommands = []
+    for i in 0...@commands[0].length
+      @movecommands.push(@commands[0][i][1])
+    end
+    for i in 0...@commands[1].length
+      @itemcommands.push(@commands[1][i][1])
+    end
+    @index = $PokemonBag.registeredIndex
+    if @index[0]>=@movecommands.length && @movecommands.length>0
+      @index[0] = @movecommands.length-1
+    end
+    if @index[1]>=@itemcommands.length && @itemcommands.length>0
+      @index[1] = @itemcommands.length-1
+    end
+    if @index[2]==0 && @movecommands.length==0
+      @index[2] = 1
+    elsif @index[2]==1 && @itemcommands.length==0
+      @index[2] = 0
+    end
+    @viewport = Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z = 99999
+    @sprites = {}
+    @sprites["cmdwindow"] = Window_CommandPokemon.new((@index[2]==0) ? @movecommands : @itemcommands,tts:false) ### MODDED
+    #@sprites["cmdwindow"].height = @itemcommands.length*32
+    @sprites["cmdwindow"].visible = false
+    @sprites["cmdwindow"].viewport = @viewport
+    #pbSEPlay("GUI menu open")
   end
 
   def pbShowCommands

@@ -767,8 +767,7 @@ class FightMenuDisplay
       @display=IconSprite.new(0,Graphics.height-96,viewport)
       @display.setBitmap("Graphics/Pictures/Battle/battleFight")
     end
-    @window=Window_CommandPokemon.newWithSize([],0,Graphics.height-96,320,96,viewport)
-    @window.notts ### MODDED
+    @window=Window_CommandPokemon.newWithSize([],0,Graphics.height-96,320,96,viewport, tts: false) ### MODDED
     @window.columns=2
     @window.columnSpacing=4
     @window.ignore_input=true

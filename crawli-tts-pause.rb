@@ -1,9 +1,18 @@
 class PokemonMenu_Scene
-  alias :crawlittspause_old_pbStartScene :pbStartScene
-
   def pbStartScene
-    crawlittspause_old_pbStartScene
-    @sprites["cmdwindow"].notts
+    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z=99999
+    @sprites={}
+    @sprites["cmdwindow"]=Window_CommandPokemon.new([],tts:false) ### MODDED
+    @sprites["infowindow"]=Window_UnformattedTextPokemon.newWithSize("",0,0,32,32,@viewport)
+    @sprites["infowindow"].visible=false
+    @sprites["helpwindow"]=Window_UnformattedTextPokemon.newWithSize("",0,0,32,32,@viewport)
+    @sprites["helpwindow"].visible=false
+    @sprites["cmdwindow"].visible=false
+    @infostate=false
+    @helpstate=false
+    $game_temp.in_menu = true
+    pbSEPlay("menu")
   end
 
   def pbShowCommands(commands)
