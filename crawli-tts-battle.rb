@@ -407,6 +407,7 @@ class PokeBattle_Scene
     end
   end
 
+
   def pbCommandMenuEx(index,texts,mode=0)      # Mode: 0 - regular battle
     pbShowWindow(COMMANDBOX)                   #       1 - Shadow Pokémon battle
     cw=@sprites["commandwindow"]               #       2 - Safari Zone
@@ -423,11 +424,7 @@ class PokeBattle_Scene
       pbFrameUpdate(cw,update_menu)
       update_menu=false
       # Update selected command
-      if Input.trigger?(Input::CTRL)
-        pbToggleStatsBoostsVisibility
-        pbPlayCursorSE()
-        update_menu=true
-      elsif Input.trigger?(Input::LEFT) && (cw.index&1)==1
+      if Input.trigger?(Input::LEFT) && (cw.index&1)==1
         pbPlayCursorSE()
         cw.index-=1
         tts(texts[cw.index + 1]) ### MODDED
@@ -447,6 +444,12 @@ class PokeBattle_Scene
         cw.index+=2
         tts(texts[cw.index + 1]) ### MODDED
         update_menu=true
+      elsif Input.trigger?(Input::Y)  #Show Battle Stats feature made by DemICE
+        statstarget=pbStatInfo(index)
+        return -1 if statstarget==-1      
+        if !pbInSafari?
+          pbShowBattleStats(statstarget)
+        end
       end
       if Input.trigger?(Input::C)   # Confirm choice
         pbPlayDecisionSE()

@@ -20,7 +20,7 @@ BLINDSTEP_WEATHER_BGS = {
 def playWeatherOrDiveBGS
   # return unless Reborn
 
-  if $game_switches[:Blindstep]
+  if BlindstepActive
     if $game_player.terrain_tag == PBTerrain::DeepWater
       pbAccessiblilityBGSPlay("Ambient Depth")
       return
@@ -35,7 +35,7 @@ def playWeatherOrDiveBGS
   end
 
   weatherBGS = WEATHER_BGS
-  weatherBGS.merge!(BLINDSTEP_WEATHER_BGS) if $game_switches[:Blindstep]
+  weatherBGS.merge!(BLINDSTEP_WEATHER_BGS) if BlindstepActive
   if weatherBGS[$game_screen.weather_type]
     pbAccessiblilityBGSPlay(weatherBGS[$game_screen.weather_type])
   else

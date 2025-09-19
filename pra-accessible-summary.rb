@@ -119,7 +119,7 @@ def pbPokemonScreen
                 region = $cache.mapdata[$game_map.map_id].MapPosition[0]
               end
 
-              if $game_switches[:Blindstep]
+              if BlindstepActive
                 ret = Blindstep.flyMenu
               else
                 scene = PokemonRegionMapScene.new(region, false)

@@ -34,15 +34,15 @@ def pbShowBattleStats(pkmn)
   else
     report = [_INTL("Type: {1}", toProperCase(shownmon.type1))]
   end
-  if $game_switches[:Blindstep]
-    report.push(_INTL("Species: {1}", getMonName(pkmn.species, pkmn.form)))
+  if BlindstepActive
+    report.push(_INTL("Species: {1}", getMonName(pkmn.species)))
   end
   if pkmn.pokemon.isPulse? || pkmn.pokemon.isRift? || pkmn.pokemon.isPerfection? || pkmn.isMega? || pkmn.isPrimal? || pkmn.isUltra?
     form = pkmn.pokemon.getFormName
     form = form.gsub(/\b(?: Form| Forme)\b/, '')
     report.push(_INTL("Form: {1}", form))
   end
-  if $game_switches[:Blindstep]
+  if BlindstepActive
     if !(@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index)) && !@battle.opponent
       report.push(_INTL("Owned: {1}", $Trainer.pokedex.dexList[pkmn.species][:owned?] ? "Yes" : "No"))
     end
@@ -67,7 +67,7 @@ def pbShowBattleStats(pkmn)
 
   if ((@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index)) && @battle.doublebattle) || $DEBUG
     stastr[0] = "HP:                           {1}/{2}"
-  elsif $game_switches[:Blindstep]
+  elsif BlindstepActive
     stastr[0] = "HP:                           #{(pkmn.hp.to_f / pkmn.totalhp.to_f * 1000).to_i / 10.0}%"
   end
   if Rejuv || @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index) || $DEBUG
@@ -157,7 +157,7 @@ def pbShowBattleStats(pkmn)
   report.push(_INTL("Minimized")) if pkmn.effects[:Minimize]
   report.push(_INTL("Recharging")) if pkmn.effects[:HyperBeam] != 0
   report.push(_INTL("Fury Cutter: +{1}", pkmn.effects[:FuryCutter])) if pkmn.effects[:FuryCutter] != 0
-  report.push(_INTL("Echoed Voice: +{1}", @battle.echoedVoice)) if @battle.echoedVoice != 0
+  report.push(_INTL("Echoed Voice: +{1}",pkmn.effects[:EchoedVoice])) if pkmn.effects[:EchoedVoice] != 0
   report.push(_INTL("Mean Look")) if pkmn.effects[:MeanLook] > -1
   report.push(_INTL("Foresight")) if pkmn.effects[:Foresight]
   report.push(_INTL("Follow Me")) if pkmn.effects[:FollowMe]
@@ -225,8 +225,8 @@ def pbShowBattleStats(pkmn)
 
   buttonview = Viewport.new(0, 236, 80, 56)
   buttonview.z = 99999
-  fieldnotes = readableFieldNotes()
-  pulsenotes = readablePulseNotes(@battle) if Reborn
+  # fieldnotes = readableFieldNotes()
+  # pulsenotes = readablePulseNotes(@battle) if Reborn
   # if canCheckFieldApp?(fieldnotes)
   #   @sprites["fieldappbitmap"] = IconSprite.new(0, 26, buttonview)
   #   @sprites["fieldappbitmap"].setBitmap("Graphics/Pictures/Battle/battleFieldApp")
@@ -235,42 +235,23 @@ def pbShowBattleStats(pkmn)
   #   @sprites["pulsedexbitmap"] = IconSprite.new(0, canCheckFieldApp?(fieldnotes) ? 0 : 26, buttonview)
   #   @sprites["pulsedexbitmap"].setBitmap("Graphics/Pictures/Battle/battlePulseDex")
   # end
-  @sprites["msgwindow"] = Kernel.pbCreateMessageWindow
-  Kernel.pbMessageDisplay(
-    @sprites["msgwindow"], (_INTL "Inspecting {1}:", pkmn.name), true,
-    proc { |msgwindow|
-      next pbShowInspect(msgwindow, report, report.length) {
-        if Input.trigger?(Input::Y) && canCheckFieldApp?(fieldnotes)
-          pbPlayCursorSE()
-          fieldlayers = @battle.field.layer
-          for terrain in [:ELECTERRAIN, :GRASSY, :MISTY, :PSYTERRAIN]
-            fieldlayers.append(terrain) if @battle.state.effects[terrain] > 0
-          end
-          fieldlayers.uniq! # Needed to stop dupes from backing out
-          infoscene = Scene_FieldNotes_Battle.new
-          pbCheckPokegearScene(infoscene, fieldlayers)
-        elsif Input.trigger?(Input::Z) && canCheckPulseDex?(pulsenotes)
-          pbPlayCursorSE()
-          infoscene = Scene_PulseDex_Battle.new
-          backgrounds = pulsenotes
-          pbCheckPokegearScene(infoscene, backgrounds)
-        elsif Input.trigger?(Input::L)
-          break if pkmn.index == 0 && !@battle.doublebattle
-          break if @battle.doublebattle && pkmn.index.even? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
+  Kernel.pbMessage(_INTL("Inspecting {1}:", pkmn.name), report, report.length) { |msgwindow|
+    if Input.trigger?(Input::L)
+      break if pkmn.index == 0 && !@battle.doublebattle
+      break if @battle.doublebattle && pkmn.index.even? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
 
-          linput = true
-          break
-        elsif Input.trigger?(Input::R)
-          break if pkmn.index == 1 && !@battle.doublebattle
-          break if @battle.doublebattle && pkmn.index.odd? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
+      linput = true
+      break
+    elsif Input.trigger?(Input::R)
+      break if pkmn.index == 1 && !@battle.doublebattle
+      break if @battle.doublebattle && pkmn.index.odd? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
 
-          rinput = true
-          break
-        end
-      }
-    }
-  )
-  pbEndInspect(buttonview)
+      rinput = true
+      break
+    end
+  }
+  buttonview.dispose
+  Input.update
   if linput
     battleindex = chooseInspectSlot(0, pkmn.index)
     pbShowBattleStats(@battle.battlers[battleindex])
@@ -280,45 +261,46 @@ def pbShowBattleStats(pkmn)
   end
 end
 
-def pbShowInspect(msgwindow, commands, cmdIfCancel)
-  @sprites["cmdwindow"] = Window_CommandPokemon_NoPageScroll.new(commands)
-  @sprites["cmdwindow"].z = 99999
-  @sprites["cmdwindow"].visible = true
-  @sprites["cmdwindow"].resizeToFit(@sprites["cmdwindow"].commands)
-  pbPositionNearMsgWindow(@sprites["cmdwindow"], msgwindow, :right)
-  @sprites["cmdwindow"].index = 0
-  command = 0
-  loop do
-    Graphics.update
-    Input.update
-    @sprites["cmdwindow"].update
-    msgwindow.update if msgwindow
-    yield if block_given?
-    if Input.trigger?(Input::B)
-      if cmdIfCancel > 0
-        command = cmdIfCancel - 1
-        pbWait(2)
-        break
-      elsif cmdIfCancel < 0
-        command = cmdIfCancel
-        pbWait(2)
-        break
-      end
-    end
-    if Input.trigger?(Input::C)
-      command = @sprites["cmdwindow"].index
-      break
-    end
-    pbUpdateSceneMap
-  end
-  ret = command
-  Input.update
-  return ret
-end
+# def pbShowInspect(msgwindow, commands, cmdIfCancel)
+#   @sprites["cmdwindow"] = Window_CommandPokemon.new(commands)
+#   @sprites["cmdwindow"].z = 99999
+#   @sprites["cmdwindow"].visible = true
+#   @sprites["cmdwindow"].resizeToFit(@sprites["cmdwindow"].commands)
+#   pbPositionNearMsgWindow(@sprites["cmdwindow"], msgwindow, :right)
+#   @sprites["cmdwindow"].index = 0
+#   command = 0
+#   loop do
+#     Graphics.update
+#     Input.update
+#     @sprites["cmdwindow"].update
+#     msgwindow.update if msgwindow
+#     yield if block_given?
+#     if Input.trigger?(Input::B)
+#       if cmdIfCancel > 0
+#         command = cmdIfCancel - 1
+#         pbWait(2)
+#         break
+#       elsif cmdIfCancel < 0
+#         command = cmdIfCancel
+#         pbWait(2)
+#         break
+#       end
+#     end
+#     if Input.trigger?(Input::C)
+#       command = @sprites["cmdwindow"].index
+#       break
+#     end
+#     pbUpdateSceneMap
+#   end
+#   ret = command
+#   cmdwindow.dispose
+#   Input.update
+#   return ret
+# end
 
-def pbEndInspect(buttonview)
-  Kernel.pbDisposeMessageWindow(@sprites["msgwindow"])
-  Input.update
-  @sprites["cmdwindow"].dispose
-  buttonview.dispose
-end
+# def pbEndInspect(buttonview)
+#   Kernel.pbDisposeMessageWindow(@sprites["msgwindow"])
+#   Input.update
+#   @sprites["cmdwindow"].dispose
+#   buttonview.dispose
+# end

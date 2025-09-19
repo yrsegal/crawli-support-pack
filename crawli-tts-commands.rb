@@ -106,6 +106,7 @@ class Window_CommandPokemon
   end
 
   def item_changed
+    super
     Kernel.tts(@commands[self.index]) if @commands && @tts
   end
 end
