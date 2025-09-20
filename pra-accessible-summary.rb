@@ -755,7 +755,7 @@ class PokemonStorageScreen
         if selected == nil
           if pbHeldPokemon; pbDisplay(_INTL("You're holding a Pokémon!")); next; end
           break unless pbConfirm(_INTL("Continue Box operations?")); next
-        elsif !@scene.inputCtrl && selected[0] == -4 # Box name
+        elsif !Input.press?(Input::CTRL) && selected[0] == -4 # Box name
           pbBoxCommands(mode)
         # ... (rest of original logic from Storage.rb) ...
         else
