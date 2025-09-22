@@ -25,25 +25,25 @@ module UIHelper
            curnumber-=10
            curnumber=1 if curnumber<1
            numwindow.text=_ISPRINTF("x{1:03d}",curnumber)
-           tts(currnumber.to_s) ### MODDED
+           tts(curnumber.to_s) ### MODDED
            pbPlayCursorSE()
          elsif Input.repeat?(Input::RIGHT)
            curnumber+=10
            curnumber=maximum if curnumber>maximum
            numwindow.text=_ISPRINTF("x{1:03d}",curnumber)
-           tts(currnumber.to_s) ### MODDED
+           tts(curnumber.to_s) ### MODDED
            pbPlayCursorSE()
          elsif Input.repeat?(Input::UP)
            curnumber+=1
            curnumber=1 if curnumber>maximum
            numwindow.text=_ISPRINTF("x{1:03d}",curnumber)
-           tts(currnumber.to_s) ### MODDED
+           tts(curnumber.to_s) ### MODDED
            pbPlayCursorSE()
          elsif Input.repeat?(Input::DOWN)
            curnumber-=1
            curnumber=maximum if curnumber<1
            numwindow.text=_ISPRINTF("x{1:03d}",curnumber)
-           tts(currnumber.to_s) ### MODDED
+           tts(curnumber.to_s) ### MODDED
            pbPlayCursorSE()
          elsif Input.trigger?(Input::C)
            ret=curnumber
