@@ -13,7 +13,7 @@ ItemHandlers::UseInField.add(:ITEMFINDER, proc { |item|
         $game_player.turn_right_90 if (i & 7) == 0
         pbUpdateSceneMap
       end
-      $scene.spriteset.addEventAnimation(PLANT_SPARKLE_ANIMATION_ID, event, true)
+      $scene.spriteset.addUserAnimation(PLANT_SPARKLE_ANIMATION_ID,event.x,event.y,true)
       Kernel.pbMessage(_INTL("The {1}'s indicating something right underfoot!\1", getItemName(item)))
     else
       direction = $game_player.direction
@@ -33,7 +33,7 @@ ItemHandlers::UseInField.add(:ITEMFINDER, proc { |item|
         end
         pbUpdateSceneMap
       end
-      $scene.spriteset.addEventAnimation(PLANT_SPARKLE_ANIMATION_ID, event, true)
+      $scene.spriteset.addUserAnimation(PLANT_SPARKLE_ANIMATION_ID,event.x,event.y,true)
       # Kernel.pbMessage(_INTL("Huh?\nThe {1}'s responding!\1",getItemName(item)))
       # Kernel.pbMessage(_INTL("There's an item buried around here!"))
       if BlindstepActive
