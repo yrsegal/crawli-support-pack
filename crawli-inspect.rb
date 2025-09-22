@@ -261,46 +261,11 @@ def pbShowBattleStats(pkmn)
   end
 end
 
-# def pbShowInspect(msgwindow, commands, cmdIfCancel)
-#   @sprites["cmdwindow"] = Window_CommandPokemon.new(commands)
-#   @sprites["cmdwindow"].z = 99999
-#   @sprites["cmdwindow"].visible = true
-#   @sprites["cmdwindow"].resizeToFit(@sprites["cmdwindow"].commands)
-#   pbPositionNearMsgWindow(@sprites["cmdwindow"], msgwindow, :right)
-#   @sprites["cmdwindow"].index = 0
-#   command = 0
-#   loop do
-#     Graphics.update
-#     Input.update
-#     @sprites["cmdwindow"].update
-#     msgwindow.update if msgwindow
-#     yield if block_given?
-#     if Input.trigger?(Input::B)
-#       if cmdIfCancel > 0
-#         command = cmdIfCancel - 1
-#         pbWait(2)
-#         break
-#       elsif cmdIfCancel < 0
-#         command = cmdIfCancel
-#         pbWait(2)
-#         break
-#       end
-#     end
-#     if Input.trigger?(Input::C)
-#       command = @sprites["cmdwindow"].index
-#       break
-#     end
-#     pbUpdateSceneMap
-#   end
-#   ret = command
-#   cmdwindow.dispose
-#   Input.update
-#   return ret
-# end
 
-# def pbEndInspect(buttonview)
-#   Kernel.pbDisposeMessageWindow(@sprites["msgwindow"])
-#   Input.update
-#   @sprites["cmdwindow"].dispose
-#   buttonview.dispose
-# end
+def pbStatInfo(index)
+  return @battle.battlers[index]
+end     
+
+def pbStatInfoF(index)
+ return @battle.battlers[index]
+end   
