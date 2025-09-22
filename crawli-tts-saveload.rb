@@ -1,3 +1,13 @@
+class IntroEventScene
+  alias :crawlittssaveload_old_openSplash :openSplash
+
+  def openSplash(scene,args)
+    tts("Pokemon Rejuvenation")
+    tts("Press Enter")
+    crawlittssaveload_old_openSplash(scene,args)
+  end
+end
+
 class PokemonLoadScene
 
   def pbDrawSaveCommands(savefiles)
