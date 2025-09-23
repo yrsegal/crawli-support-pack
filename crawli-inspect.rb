@@ -223,8 +223,8 @@ def pbShowBattleStats(pkmn)
   @participants = @battle.pbPartySingleOwner(pkmn.index).find_all { |mon| mon && !mon.isEgg? && mon.hp > 0 }
   report.push(_INTL("Remaining Pokémon: {1} ", @participants.length))
 
-  buttonview = Viewport.new(0, 236, 80, 56)
-  buttonview.z = 99999
+  # buttonview = Viewport.new(0, 236, 80, 56)
+  # buttonview.z = 99999
   # fieldnotes = readableFieldNotes()
   # pulsenotes = readablePulseNotes(@battle) if Reborn
   # if canCheckFieldApp?(fieldnotes)
@@ -235,23 +235,28 @@ def pbShowBattleStats(pkmn)
   #   @sprites["pulsedexbitmap"] = IconSprite.new(0, canCheckFieldApp?(fieldnotes) ? 0 : 26, buttonview)
   #   @sprites["pulsedexbitmap"].setBitmap("Graphics/Pictures/Battle/battlePulseDex")
   # end
-  Kernel.pbMessage(_INTL("Inspecting {1}:", pkmn.name), report, report.length) { |msgwindow|
-    if Input.trigger?(Input::L)
-      break if pkmn.index == 0 && !@battle.doublebattle
-      break if @battle.doublebattle && pkmn.index.even? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
+  @sprites["msgwindow"] = Kernel.pbCreateMessageWindow
+  Kernel.pbMessageDisplay(
+    @sprites["msgwindow"], (_INTL "Inspecting {1}:", pkmn.name), true,
+    proc { |msgwindow|
+      next pbShowInspect(msgwindow, report, report.length) {
+        if Input.trigger?(Input::L)
+          break if pkmn.index == 0 && !@battle.doublebattle
+          break if @battle.doublebattle && pkmn.index.even? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
 
-      linput = true
-      break
-    elsif Input.trigger?(Input::R)
-      break if pkmn.index == 1 && !@battle.doublebattle
-      break if @battle.doublebattle && pkmn.index.odd? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
+          linput = true
+          break
+        elsif Input.trigger?(Input::R)
+          break if pkmn.index == 1 && !@battle.doublebattle
+          break if @battle.doublebattle && pkmn.index.odd? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
 
-      rinput = true
-      break
-    end
-  }
-  buttonview.dispose
-  Input.update
+          rinput = true
+          break
+        end
+      }
+    }
+  )
+  pbEndInspect
   if linput
     battleindex = chooseInspectSlot(0, pkmn.index)
     pbShowBattleStats(@battle.battlers[battleindex])
@@ -261,6 +266,48 @@ def pbShowBattleStats(pkmn)
   end
 end
 
+
+def pbShowInspect(msgwindow, commands, cmdIfCancel)
+  @sprites["cmdwindow"] = Window_CommandPokemon.new(commands)
+  @sprites["cmdwindow"].z = 99999
+  @sprites["cmdwindow"].visible = true
+  @sprites["cmdwindow"].resizeToFit(@sprites["cmdwindow"].commands)
+  pbPositionNearMsgWindow(@sprites["cmdwindow"], msgwindow, :right)
+  @sprites["cmdwindow"].index = 0
+  command = 0
+  loop do
+    Graphics.update
+    Input.update
+    @sprites["cmdwindow"].update
+    msgwindow.update if msgwindow
+    yield if block_given?
+    if Input.trigger?(Input::B)
+      if cmdIfCancel > 0
+        command = cmdIfCancel - 1
+        pbWait(2)
+        break
+      elsif cmdIfCancel < 0
+        command = cmdIfCancel
+        pbWait(2)
+        break
+      end
+    end
+    if Input.trigger?(Input::C)
+      command = @sprites["cmdwindow"].index
+      break
+    end
+    pbUpdateSceneMap
+  end
+  ret = command
+  Input.update
+  return ret
+end
+
+def pbEndInspect
+  Kernel.pbDisposeMessageWindow(@sprites["msgwindow"])
+  Input.update
+  @sprites["cmdwindow"].dispose
+end
 
 def pbStatInfo(index)
   return @battle.battlers[index]
