@@ -22,13 +22,13 @@ def playWeatherOrDiveBGS
 
   if BlindstepActive
     if $game_player.terrain_tag == PBTerrain::DeepWater
-      pbAccessiblilityBGSPlay("Ambient Depth")
+      pbAccessibilityBGSPlay("Ambient Depth")
       return
     end
     if $PokemonGlobal.diving
       divemap = $cache.mapdata[$game_map.map_id].SurfaceMap
       if !divemap.nil? && $MapFactory.getTerrainTag(divemap, $game_player.x, $game_player.y) == PBTerrain::DeepWater
-        pbAccessiblilityBGSPlay("Ambient Light")
+        pbAccessibilityBGSPlay("Ambient Light")
         return
       end
     end
@@ -37,7 +37,7 @@ def playWeatherOrDiveBGS
   weatherBGS = WEATHER_BGS
   weatherBGS.merge!(BLINDSTEP_WEATHER_BGS) if BlindstepActive
   if weatherBGS[$game_screen.weather_type]
-    pbAccessiblilityBGSPlay(weatherBGS[$game_screen.weather_type])
+    pbAccessibilityBGSPlay(weatherBGS[$game_screen.weather_type])
   else
     pbBGSStop(0.5)
   end
