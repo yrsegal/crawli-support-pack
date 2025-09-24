@@ -241,14 +241,14 @@ def pbShowBattleStats(pkmn)
     proc { |msgwindow|
       next pbShowInspect(msgwindow, report, report.length) {
         if Input.trigger?(Input::L)
-          break if pkmn.index == 0 && !@battle.doublebattle
-          break if @battle.doublebattle && pkmn.index.even? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
+          next if pkmn.index == 0 && !@battle.doublebattle
+          next if @battle.doublebattle && pkmn.index.even? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
 
           linput = true
           break
         elsif Input.trigger?(Input::R)
-          break if pkmn.index == 1 && !@battle.doublebattle
-          break if @battle.doublebattle && pkmn.index.odd? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
+          next if pkmn.index == 1 && !@battle.doublebattle
+          next if @battle.doublebattle && pkmn.index.odd? && @battle.battlers[(pkmn.index + 2) % 4].isFainted?
 
           rinput = true
           break
@@ -266,6 +266,10 @@ def pbShowBattleStats(pkmn)
   end
 end
 
+def chooseInspectSlot(preference, current)
+  preference = (preference + 2) % 4 if preference == current
+  return @battle.battlers[preference].isFainted? ? (preference + 2) % 4 : preference
+end
 
 def pbShowInspect(msgwindow, commands, cmdIfCancel)
   @sprites["cmdwindow"] = Window_CommandPokemon.new(commands)
