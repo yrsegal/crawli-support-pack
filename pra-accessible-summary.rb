@@ -646,7 +646,7 @@ class PokemonStorageScreen
           next
         end
         if selected && selected[0] == -4 # Box name
-          pbBoxCommands(mode)
+          pbBoxCommands
           next
         end
         if selected == nil
