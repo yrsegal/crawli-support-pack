@@ -56,8 +56,31 @@ class Scene_Map
     end
 
     # Quicksave
-    
-    if Input.trigger?(Input::Z)
+
+    ### MODDED/
+    doQuickSave = false
+    @quickSave = false if Input.time?(Input::Z) == 0.0 && !Input.release?(Input::Z)
+    if Input.time?(Input::Z) >= 0.5
+      if BlindstepActive
+        @quickSave = true
+      else
+        if $game_player && $game_map
+          message = sprintf("X %d, Y %d, map %d, %s", $game_player.x, $game_player.y, $game_map.map_id, $game_map.name)
+          Kernel.pbMessage(message)
+        end
+      end
+    elsif Input.release?(Input::Z) && !Input.press?(Input::Z)
+      if @quickSave || !BlindstepActive
+        @quickSave = false
+        doQuickSave = true
+      elsif $game_player && $game_map
+        message = sprintf("X %d, Y %d, map %d, %s", $game_player.x, $game_player.y, $game_map.map_id, $game_map.name)
+        tts(message, true)
+      end
+    end
+
+    if doQuickSave
+    ### /MODDED
       if $game_switches[:Disable_Quicksave]==false #&& !pbMapInterpreterRunning?
         $game_switches[:Mid_quicksave]=true
         $game_switches[:Stop_Icycle_Falling]=true
@@ -65,17 +88,16 @@ class Scene_Map
           event.minilock
         end
         ### MODDED/
-        message = sprintf("X %d, Y %d, map %d, %s", $game_player.x, $game_player.y, $game_map.map_id, $game_map.name)
-        tts(message, true)
-        pbWait(30)
+        # if Kernel.pbConfirmMessage(_INTL("Would you like to save the game?"))
         ### /MODDED
-        if Kernel.pbConfirmMessage(_INTL("Would you like to save the game?"))
           if pbSave
             Kernel.pbMessage("Saved the game!")
           else
             Kernel.pbMessage("Save failed.")
           end
-        end
+        ### MODDED/
+        # end
+        ### /MODDED
         for event in $game_map.events.values
           event.unlock
         end
