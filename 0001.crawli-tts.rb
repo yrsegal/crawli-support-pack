@@ -20,12 +20,34 @@ if System.platform[/Windows/]
     end
   end
 elsif System.platform[/Mac/] || System.platform[/macOS/]
-  Process.kill(:SIGINT, $TTS_CURRENT_PID) if defined?($TTS_CURRENT_PID) && $TTS_CURRENT_PID != -1
-  $TTS_CURRENT_PID = -1
+  # Clean up old pre-reload TTS processes
+  Process.kill(:INT, $ACTIVE_TTS_PROCESS) if defined?($ACTIVE_TTS_PROCESS) && $ACTIVE_TTS_PROCESS > 0
+  $TTS_THREAD.kill if defined?($TTS_THREAD) && $TTS_THREAD
+
+  # Initialize TTS
+  $TTS_QUEUE = []
+  $ACTIVE_TTS_PROCESS = -1
+  $TTS_THREAD = Thread.new {
+    loop do
+      if $TTS_QUEUE.empty?
+        sleep
+      else
+        message = $TTS_QUEUE.shift
+        $ACTIVE_TTS_PROCESS = spawn "say -r 200 --quality 0 #{message.gsub(/["\$\r\1\2]/, '').inspect}"
+        Process.wait($ACTIVE_TTS_PROCESS)
+        $ACTIVE_TTS_PROCESS = -1
+      end
+    end
+  }
+
   $tts = ->(message, interrupt) {
-    Process.kill(:SIGINT, $TTS_CURRENT_PID) if interrupt && $TTS_CURRENT_PID != -1
-    Process.wait($TTS_CURRENT_PID) if !interrupt && $TTS_CURRENT_PID != -1
-    $TTS_CURRENT_PID = Process.spawn("say -r 200 --quality 0 #{message.gsub(/["\$\r\1\2]/, '').inspect}")
+    if interrupt
+      $TTS_QUEUE.clear
+      Process.kill(:INT, $ACTIVE_TTS_PROCESS) if $ACTIVE_TTS_PROCESS > 0
+    end
+    
+    $TTS_QUEUE.push(message)
+    $TTS_THREAD.run
   }
 end
 
