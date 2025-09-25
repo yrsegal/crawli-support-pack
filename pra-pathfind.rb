@@ -168,12 +168,16 @@ def rename_selected_event
   event = @mapevents[@selected_event_index]
 
   # Prompt user for the new name
+  Input.text_input = true
   new_name = Kernel.pbMessageFreeText(_INTL("Enter new name for the selected event."), "", false, 24)
+  Input.text_input = false
   
   # Check if the user entered a valid, non-blank name
   if new_name && !new_name.strip.empty?
     # Prompt user for an optional description
+    Input.text_input = true
     new_desc = Kernel.pbMessageFreeText(_INTL("Enter an optional description."), "", false, 100)
+    Input.text_input = false
 
     # Gather all necessary data
     map_id = $game_map.map_id
