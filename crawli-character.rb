@@ -72,7 +72,13 @@ class Game_Player
     else
       if !check_event_trigger_touch(@x, @y+1)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump")
+          ### MODDED/
+          if self.respond_to?("playBumpSE")
+            playBumpSE
+          else
+            pbSEPlay("bump")
+          end
+          ### /MODDED
           @bump_se=10
         end
       end
@@ -101,7 +107,13 @@ class Game_Player
     else
       if !check_event_trigger_touch(@x-1, @y)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump")
+          ### MODDED/
+          if self.respond_to?("playBumpSE")
+            playBumpSE
+          else
+            pbSEPlay("bump")
+          end
+          ### /MODDED
           @bump_se=10
         end
       end
@@ -130,7 +142,13 @@ class Game_Player
     else
       if !check_event_trigger_touch(@x+1, @y)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump")
+          ### MODDED/
+          if self.respond_to?("playBumpSE")
+            playBumpSE
+          else
+            pbSEPlay("bump")
+          end
+          ### /MODDED
           @bump_se=10
         end
       end
@@ -161,7 +179,13 @@ class Game_Player
     else
       if !check_event_trigger_touch(@x, @y-1)
         if !@bump_se || @bump_se<=0
-          pbSEPlay("bump")
+          ### MODDED/
+          if self.respond_to?("playBumpSE")
+            playBumpSE
+          else
+            pbSEPlay("bump")
+          end
+          ### /MODDED
           @bump_se=10
         end
       end
