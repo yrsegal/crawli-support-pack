@@ -460,13 +460,24 @@ def torDisplayPokemonDetails(pkmn,defaultMoveID=0)
     end
   end
 
-  if (pkmn.isShadow? rescue false)
-    typing += " (Shadow)"
-  end
+  nameline = "#{dexentity.pokemonData[dexentity.forms[0]].name} - #{typing}"
   
-  commands.push("#{dexentity.pokemonData[dexentity.forms[0]].name} - #{typing}")
-  remexp=PBExp.startExperience(pkmn.level+1,pkmn.growthrate)-pkmn.exp
-  commands.push("Level #{pkmn.level} - #{remexp} experience to next level")
+  nameline = "Shadow " + nameline if (pkmn.isShadow? rescue false)
+  nameline = "Shiny " + nameline if pkmn.isShiny?
+
+  commands.push(nameline)
+  xpline = "Level #{pkmn.level}"
+  if (pkmn.isShadow? rescue false)
+    if pkmn.heartgauge == 0
+      xpline += " - Heart Gauge: Empty, ready to purify"
+    else
+      xpline += " - Heart Gauge: #{pkmn.heartStage} bars remaining, #{pkmn.heartgauge * 100 / 3840}% left"
+    end
+  else
+    remexp=PBExp.startExperience(pkmn.level+1,pkmn.growthrate)-pkmn.exp
+    xpline += " - #{remexp} experience to next level"
+  end
+  commands.push(xpline)
   itemname="No Held Item"
   if pkmn.item
     itemname="Held item : #{$cache.items[pkmn.item].name}"
