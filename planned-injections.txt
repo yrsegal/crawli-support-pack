@@ -12,3 +12,9 @@ Offer to skip puzzles in Tower of Theolia
 Have Bonita explain you can just hold A in the quiz
 Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
 Better info for raid dens?
+difficulty choice readout
+all ... options are read as "ellipsis"
+
+pathfinder mod - todo make mode for excluding inaccessible objects
+Input::A (c by default) to read move info
+sound cue when command menu opens
