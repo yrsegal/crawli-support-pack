@@ -459,6 +459,10 @@ def torDisplayPokemonDetails(pkmn,defaultMoveID=0)
       end
     end
   end
+
+  if (pkmn.isShadow? rescue false)
+    typing += " (Shadow)"
+  end
   
   commands.push("#{dexentity.pokemonData[dexentity.forms[0]].name} - #{typing}")
   remexp=PBExp.startExperience(pkmn.level+1,pkmn.growthrate)-pkmn.exp
@@ -756,7 +760,7 @@ class PokemonStorageScreen
           if pbHeldPokemon; pbDisplay(_INTL("You're holding a Pokémon!")); next; end
           break unless pbConfirm(_INTL("Continue Box operations?")); next
         elsif !Input.press?(Input::CTRL) && selected[0] == -4 # Box name
-          pbBoxCommands(mode)
+          pbBoxCommands
         # ... (rest of original logic from Storage.rb) ...
         else
           pokemon = @storage[selected[0], selected[1]]
