@@ -29,7 +29,7 @@ class Game_Player
     # breakable mirrors
     return pbAccessibilitySEPlay("bump-mirror") if eventName == "Glass"
     # zygarde cells
-    return pbAccessibilitySEPlay("bump-zcell") if character == "zycell"
+    return pbAccessibilitySEPlay("bump-zcell") if character == "Object Cell"
     # item balls
     return pbAccessibilitySEPlay("bump-item") if character.start_with?("itemball")
     # rock climb check names? found one in celestine that's wrong

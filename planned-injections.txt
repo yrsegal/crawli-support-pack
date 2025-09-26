@@ -16,5 +16,5 @@ difficulty choice readout
 all ... options are read as "ellipsis"
 
 pathfinder mod - todo make mode for excluding inaccessible objects
-Input::A (c by default) to read move info
+Input::A (z by default) to read move info
 sound cue when command menu opens
