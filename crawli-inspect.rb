@@ -88,7 +88,7 @@ def pbShowBattleStats(pkmn)
   stastr[8] = "Crit. Rate:    {1}%    +{2}/3"
 
   report.push(_INTL(stastr[0], pkmn.hp, pkmn.totalhp)) if !stastr[0].nil?
-  report.push(_INTL("Shields remaining: {1}", battler.shieldCount)) if pkmn.isbossmon
+  report.push(_INTL("Shields remaining: {1}", pkmn.shieldCount)) if pkmn.isbossmon
   if Rejuv || @battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index) || $DEBUG
     report.push(
       _INTL(stastr[1], pkmn.pbCalcAttack(), atksbl, pkmn.stages[PBStats::ATTACK]),

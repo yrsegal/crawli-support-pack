@@ -49,6 +49,22 @@ elsif System.platform[/Mac/] || System.platform[/macOS/]
     $TTS_QUEUE.push(message)
     $TTS_THREAD.run
   }
+
+  module Input
+    unless defined?(crawlitts_old_update)
+      class << Input
+        alias :crawlitts_old_update :update
+      end
+    end
+
+    def self.update
+      crawlitts_old_update
+      if press?(Input::CTRL)
+        $TTS_QUEUE.clear
+        Process.kill(:INT, $ACTIVE_TTS_PROCESS) if $ACTIVE_TTS_PROCESS > 0
+      end
+    end
+  end
 end
 
 def tts(text, interrupt = false)
