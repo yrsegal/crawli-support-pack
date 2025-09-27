@@ -15,6 +15,11 @@ Better info for raid dens?
 difficulty choice readout
 all ... options are read as "ellipsis"
 
-pathfinder mod - todo make mode for excluding inaccessible objects
+pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
 Input::A (z by default) to read move info
 sound cue when command menu opens
+
+Accessible voltorb flip
+Make movement paths slower?
+
+
