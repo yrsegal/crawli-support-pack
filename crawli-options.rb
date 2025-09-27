@@ -40,6 +40,13 @@ class PokemonOptions
     @ambientRate = 40 unless defined?(@ambientRate) # Ambient SE rate (10 - 200)
     return @ambientRate
   end
+
+  attr_writer :speechRate
+  
+  def speechRate
+    @ambientRate = 20 unless defined?(@ambientRate) # tens of words per minute (3 to 50)
+    return @ambientRate
+  end
 end
 
 class PokemonOptionScene
@@ -105,6 +112,12 @@ class PokemonBlindstepOptionScene
       proc { |value| $Settings.ambientRate = value + 10 },
       "Rate (in frames) of event and wall sound effects. 40 frames is 1 second."
     )]
+    OptionList.push(NumberOption.new(
+      _INTL("Speech Rate"), _INTL("Type %d"), 3, 50,
+      proc { $Settings.speechRate },
+      proc { |value| $Settings.speechRate = value },
+      "Rate (in tens of words per minute) that TTS will speak words."
+      )) if System.platform[/Mac/] || System.platform[/macOS/]
   def pbUpdate
     pbUpdateSpriteHash(@sprites)
   end

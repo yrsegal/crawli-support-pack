@@ -27,18 +27,21 @@ elsif System.platform[/Mac/] || System.platform[/macOS/]
   # Initialize TTS
   $TTS_QUEUE = []
   $ACTIVE_TTS_PROCESS = -1
-  $TTS_THREAD = Thread.new {
-    loop do
-      if $TTS_QUEUE.empty?
-        sleep
-      else
-        message = $TTS_QUEUE.shift
-        $ACTIVE_TTS_PROCESS = spawn "say -r 200 --quality 0 #{message.gsub(/["\$\r\1\2]/, '').inspect}"
-        Process.wait($ACTIVE_TTS_PROCESS)
-        $ACTIVE_TTS_PROCESS = -1
+  def tts_createthread
+    $TTS_THREAD = Thread.new {
+      loop do
+        if $TTS_QUEUE.empty?
+          sleep
+        else
+          message = $TTS_QUEUE.shift
+          $ACTIVE_TTS_PROCESS = spawn "say -r #{$Settings.speechRate * 10} --quality 0 #{message.gsub(/["\$\r\1\2]/, '').inspect}"
+          Process.wait($ACTIVE_TTS_PROCESS)
+          $ACTIVE_TTS_PROCESS = -1
+        end
       end
-    end
-  }
+    }
+  end
+  tts_createthread
 
   $tts = ->(message, interrupt) {
     if interrupt
@@ -46,7 +49,7 @@ elsif System.platform[/Mac/] || System.platform[/macOS/]
       Process.kill(:INT, $ACTIVE_TTS_PROCESS) if $ACTIVE_TTS_PROCESS > 0
     end
     
-    $TTS_QUEUE.push(message)
+    $TTS_QUEUE.push(message.encode(__ENCODING__))
     $TTS_THREAD.run
   }
 
