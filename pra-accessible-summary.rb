@@ -221,9 +221,36 @@ def pbPokemonScreen
     @scene.pbEndScene
     return nil
   end
+
+  ### WIRE'S CODE: itemMenu
+  def itemMenu(pkmnid, pkmn)
+    command=@scene.pbShowCommands(_INTL("Do what with an item?"),[_INTL("Use"),_INTL("Give"),_INTL("Take"),_INTL("Cancel")])
+    case command
+      when 0 # Use
+      item=@scene.pbChooseItem($PokemonBag,from_bag: true)
+      if !item.nil?
+        pbUseItemOnPokemon(item,pkmn,self)
+        pbRefreshSingle(pkmnid)
+      end            
+      when 1 # Give
+        item=@scene.pbChooseItem($PokemonBag,from_bag: true)
+        if !item.nil?
+          if pbIsZCrystal?(item)
+            pbUseItemOnPokemon(item,pkmn,self)
+          else
+            pbGiveItem(item,pkmn,pkmnid)
+          end
+          pbRefreshSingle(pkmnid)
+        end
+      when 2 # Take
+        pbTakeItem(pkmn)
+        pbRefreshSingle(pkmnid)
+    end
+  end
 end
 
 ### WIRE'S CODE: pokemonData
+
 
 class MonData
   def pokemonData

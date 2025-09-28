@@ -44,8 +44,8 @@ class PokemonOptions
   attr_writer :speechRate
   
   def speechRate
-    @ambientRate = 20 unless defined?(@ambientRate) # tens of words per minute (3 to 50)
-    return @ambientRate
+    @speechRate = 20 unless defined?(@speechRate) # tens of words per minute (3 to 50)
+    return @speechRate
   end
 end
 
