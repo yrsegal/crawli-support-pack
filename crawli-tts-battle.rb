@@ -355,7 +355,7 @@ class PokeBattle_Scene
     pbShowWindow(MESSAGEBOX)
     dw = @sprites["messagewindow"]
     dw.text = msg
-    cw = Window_CommandPokemon.new(commands)
+    cw = Window_CommandPokemon.new(commands, tts: false)
     cw.x = Graphics.width - cw.width
     cw.y = Graphics.height - cw.height - dw.height
     cw.index = 0
@@ -532,6 +532,10 @@ class PokeBattle_Scene
           @lastmove[index]=ret
           return ret
         end
+      ### MODDED/ add move info readout
+      elsif Input.trigger?(Input::A) 
+        ttsMoveFull(battler, cw.index, cw.zButton == 2)
+      ### /MODDED
       elsif Input.trigger?(Input::X)   # Use Mega Evolution 
         if @battle.pbCanMegaEvolve?(index) && !pbIsZCrystal?(battler.item)
           if cw.megaButton==2
@@ -758,6 +762,12 @@ class PokeBattle_Scene
       end
     end
     tts(sprintf("%s, %s%s type%s%s", name, move.pbType(battler).name, secondtypephrase, ppphrase, fieldboostphrase))
+  end
+
+  def ttsMoveFull(battler, moveIndex, zmove)
+    move = zmove && battler.pbCompatibleZMoveFromMove?(moveIndex, true) ? battler.zmoves[moveIndex] : battler.moves[moveIndex]
+
+    CrawliMoveHelpDisplay.moveTTS(battler, move)
   end
 end
 
