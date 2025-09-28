@@ -153,7 +153,6 @@ module UIHelper
     helpwindow.letterbyletter=false
     helpwindow.text=helptext ? helptext : ""
     cmdwindow=Window_CommandPokemon.new(commands)
-    tts(commands[cmdwindow.index]) ### MODDED
     begin
       cmdwindow.viewport=helpwindow.viewport
       pbBottomRight(cmdwindow)

@@ -1,4 +1,3 @@
-Add descriptions wherever possible to the intro
 Make puzzle skips just describe the puzzle, for chrysalis courtyard
 Make shuppets in wispy chasm static and interactable
 Add a way to reset the strength puzzle in the Sanctuary
@@ -12,14 +11,20 @@ Offer to skip puzzles in Tower of Theolia
 Have Bonita explain you can just hold A in the quiz
 Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
 Better info for raid dens?
-difficulty choice readout
 all ... options are read as "ellipsis"
 
-pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
-Input::A (z by default) to read move info
-sound cue when command menu opens
+XXXXX Add descriptions wherever possible to the intro(elided by picture association)
+XXXXX difficulty choice readout (elided by picture association)
 
-Accessible voltorb flip
+
 Make movement paths slower?
 
+warnings about the reina/kreiss paths
+put in puzzle skips for the statue puzzles
 
+
+Accessible voltorb flip
+
+look over all pictures and see if I can associate text with them
+
+pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)

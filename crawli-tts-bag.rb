@@ -132,6 +132,7 @@ class PokemonBag_Scene
                next
              else
                pbRefresh
+               tts($cache.items[itemwindow.item].desc) if $cache.items[itemwindow.item] ### MODDED
                return thispocket[itemwindow.index]
              end
            else
