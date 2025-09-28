@@ -106,7 +106,11 @@ class Window_AdvancedCommandPokemon
 
   def item_changed
     super
-    Kernel.tts(toUnformattedText(@commands[self.index])) if @commands && @tts
+    if @commands && @tts
+      out = toUnformattedText(@commands[self.index])
+      out = "Stay silent" if out == "..."
+      Kernel.tts(out)
+    end
   end
 end
 
@@ -143,6 +147,10 @@ class Window_CommandPokemon
 
   def item_changed
     super
-    Kernel.tts(@commands[self.index]) if @commands && @tts
+    if @commands && @tts
+      out = @commands[self.index]
+      out = "Stay silent" if out == "..."
+      Kernel.tts(out)
+    end
   end
 end

@@ -11,11 +11,9 @@ Offer to skip puzzles in Tower of Theolia
 Have Bonita explain you can just hold A in the quiz
 Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
 Better info for raid dens?
-all ... options are read as "ellipsis"
 
 XXXXX Add descriptions wherever possible to the intro(elided by picture association)
 XXXXX difficulty choice readout (elided by picture association)
-
 
 Make movement paths slower?
 
@@ -24,7 +22,5 @@ put in puzzle skips for the statue puzzles
 
 
 Accessible voltorb flip
-
-look over all pictures and see if I can associate text with them
 
 pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
