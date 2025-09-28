@@ -13,7 +13,7 @@ module Input
       # Flips it back off if triggered by any of these
       if triggerex?(:LALT) || (triggerex?(:M) && Input.text_input != true) || triggerex?(:RALT) ||
         # Our actual condition
-        (triggerex?(:E) && Input.text_input != true)
+        (triggerex?(:TAB) && Input.text_input != true)
         pbTurbo()
       end
     end
