@@ -11,6 +11,7 @@ Offer to skip puzzles in Tower of Theolia
 Have Bonita explain you can just hold A in the quiz
 Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
 Better info for raid dens?
+Skip block puzzles in School of Nightmares
 
 XXXXX Add descriptions wherever possible to the intro(elided by picture association)
 XXXXX difficulty choice readout (elided by picture association)

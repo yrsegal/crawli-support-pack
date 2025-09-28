@@ -46,7 +46,7 @@ X: 'B' button; open menu; skip text.
 Z: Run, move info in battle. 
 W: Page down, toggle walk/run. 
 Q: page up. A: Mega evolve, sort. 
-S: inspect in battle.
+S: use registered item, inspect in battle.
 D: Short press: Coordinates, long press: quicksave. 
 Tab: toggle fast-forward.",
   "helpCkey" => "Press C",
