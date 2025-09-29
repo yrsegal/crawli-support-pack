@@ -31,7 +31,7 @@ class Game_Player
     # zygarde cells
     return pbAccessibilitySEPlay("bump-zcell") if character == "Object Cell"
     # item balls
-    return pbAccessibilitySEPlay("bump-item") if character.start_with?("itemball")
+    return pbAccessibilitySEPlay("bump-item") if character.start_with?("Object ball")
     # rock climb check names? found one in celestine that's wrong
     return pbAccessibilitySEPlay("bump-rockclimb") if eventName.start_with?("RockClimb") && eventHasCommands
     # check terrains

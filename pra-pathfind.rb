@@ -261,7 +261,7 @@ end
 
 def is_item_event?(event)
   return false if !event
-  return event.character_name.start_with?("itemball")
+  return event.character_name.start_with?("Object ball")
 end
 
 def is_hidden_item_event?(event)
