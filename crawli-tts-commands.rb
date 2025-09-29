@@ -79,7 +79,7 @@ class Window_AdvancedCommandPokemon
   def initialize(commands,width=nil,tts:true)
     @tts=tts
     crawlittscommands_old_initialize(commands,width)
-    speak_command(0) @commands && @commands[0] && @tts
+    speak_command(0) if @commands && @commands[0] && @tts
   end
 
   def self.newWithSize(commands,x,y,width,height,viewport=nil,tts:true)
@@ -98,7 +98,7 @@ class Window_AdvancedCommandPokemon
 
   def commands=(value)
     @commands = value
-    Kernel.tts(@commands[0]) if @commands && @commands[0] && @tts
+    speak_command(0) if @commands && @commands[0] && @tts
     @item_max = commands.length
     self.update_cursor_rect
     self.refresh
@@ -144,7 +144,7 @@ class Window_CommandPokemon
 
   def commands=(value)
     @commands = value
-    Kernel.tts(@commands[0]) if @commands && @commands[0] && @tts
+    speak_command(0) if @commands && @commands[0] && @tts
     @item_max = commands.length
     self.update_cursor_rect
     self.refresh
