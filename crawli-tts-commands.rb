@@ -79,7 +79,7 @@ class Window_AdvancedCommandPokemon
   def initialize(commands,width=nil,tts:true)
     @tts=tts
     crawlittscommands_old_initialize(commands,width)
-    Kernel.tts(toUnformattedText(@commands[0])) if @commands && @commands[0] && @tts
+    speak_command(0) @commands && @commands[0] && @tts
   end
 
   def self.newWithSize(commands,x,y,width,height,viewport=nil,tts:true)
@@ -106,8 +106,12 @@ class Window_AdvancedCommandPokemon
 
   def item_changed
     super
+    speak_command(self.index)
+  end
+
+  def speak_command(idx)
     if @commands && @tts
-      out = toUnformattedText(@commands[self.index])
+      out = toUnformattedText(@commands[idx])
       out = "Stay silent" if out == "..."
       out = "Unknown" if out == "???"
       Kernel.tts(out)
@@ -121,7 +125,7 @@ class Window_CommandPokemon
   def initialize(commands,width=nil,tts:true)
     @tts=tts
     crawlittscommands_old_initialize(commands,width)
-    Kernel.tts(@commands[0]) if @commands && @commands[0] && @tts
+    speak_command(0) if @commands && @commands[0] && @tts
   end
 
   def self.newWithSize(commands,x,y,width,height,viewport=nil,tts:true)
@@ -148,8 +152,12 @@ class Window_CommandPokemon
 
   def item_changed
     super
+    speak_command(self.index)
+  end
+
+  def speak_command(idx)
     if @commands && @tts
-      out = @commands[self.index]
+      out = @commands[idx]
       out = "Stay silent" if out == "..."
       out = "Unknown" if out == "???"
       Kernel.tts(out)
