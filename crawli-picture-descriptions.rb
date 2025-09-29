@@ -247,13 +247,36 @@ I'm looking for another trainer to spar with. This is really important to me. Se
 I'll be outside of the Cherry Blossom Inn at night.
 REWARD: 1600 P, Clobbopus
 CLIENT: Unknown",
-  "Quest#13" => "",
-  "Quest#14" => "",
-  "Quest#15" => "",
-  "Quest#16" => "",
-  "Quest#17" => "",
-  "Quest#18" => "",
-  "Quest#19" => "",
+  "Quest#13" => "SECRET OF THE BLACK SHARDS
+We're doing some investigation work on Black Shards at the Terajuma Excavation Site. If you're a trainer that's willing to learn more about Black Shards, make your way over here!
+REWARD: 4326 P
+CLIENT: Gilda",
+  "Quest#14" => "ABNORMAL PHENOMENON (Time sensitive)
+I am a scientist at the Weather Institute up on Mt. Terajuma. Recently, we've been seeing some weird phenomenon disrupt our radars! Please help us investigate the issues we've been experiencing!
+REWARD: 5000 P, a Rare Candy, something secret
+CLIENT: Weather Institute",
+  "Quest#15" => "BUILDING BRIDGES
+I own a construction company which has helped build bridges all around Terajuma Jungle. Recently my workers (Pokémon) have refused to to their jobs anymore! Please help me set them straight?
+REWARD: 4890 P, a Sun Stone
+CLIENT: Gerald",
+  "Quest#16" => "SUSPICIOUS PERSON! (Time sensitive)
+There's a mysterious person hanging around Helojak Island now that Team Xen's left the place.
+Please take a look for me.
+REWARD: 4255 P
+CLIENT: Unknown",
+  "Quest#17" => "BATTLE REQUEST 3 (Time sensitive)
+Looking for a serious trainer from Terajuma to spar with. This is really important, so again, serious trainers only please!
+REWARD: Something secret
+CLIENT: Unknown",
+  "Quest#18" => "LIGHTHOUSE CONUNDRUM
+The lighthouses around Terajuma have been inactive for some time now. I need someone to investigate them. Thank you!
+REWARD: 6245 P, Mareep
+CLIENT: Ranger HQ",
+  "Quest#19" => "QUIZ TIME! (Time sensitive)
+I've prepared a quiz for anyone who wants to take it!
+If you or anyone you know wants to take my quiz, visit me at my home in Kristiline Town.
+REWARD: 10000 P
+CLIENT: Quizmaster!",
   "QuestWG1" => "GENERATOR PROBLEMS
 I am in dire need of a competent trainer to take care of a recent phenomenon that can mean the end of West Gearen if not taken care of. Not much I can say besides that. Accept and I shall give more details!
 REWARD: 5500 P, something secret
@@ -378,7 +401,7 @@ DESCRIPTION: Long black hair, scar in the shape of a key on the back of her neck
   "RiftFlashBack_4" => "I feel so warm...",
   "RuneStory_8" => "DEAR RUNE
 If you do not stop investigating the case of the missing students, we will unleash a neverending nightmare upon you.
-If you value your and huey's life, cease.",
+If you value your and Huey's life, cease.",
   "RylandDecision_1" => "Sacrifice Them All,",
   "RylandDecision_2" => "Save Ryland, or",
   "RylandDecision_3" => "Wait for a Phone Call",

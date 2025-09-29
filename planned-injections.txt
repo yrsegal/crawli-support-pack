@@ -1,3 +1,4 @@
+optional skips for venam's gym
 Make puzzle skips just describe the puzzle, for chrysalis courtyard
 Make shuppets in wispy chasm static and interactable
 Add a way to reset the strength puzzle in the Sanctuary
@@ -12,6 +13,8 @@ Have Bonita explain you can just hold A in the quiz
 Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
 Better info for raid dens?
 Skip block puzzles in School of Nightmares
+
+add day 1 text to blacksteeple
 
 XXXXX Add descriptions wherever possible to the intro(elided by picture association)
 XXXXX difficulty choice readout (elided by picture association)

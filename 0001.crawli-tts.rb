@@ -34,7 +34,7 @@ elsif System.platform[/Mac/] || System.platform[/macOS/]
           sleep
         else
           message = $TTS_QUEUE.shift
-          $ACTIVE_TTS_PROCESS = spawn "say -r #{$Settings.speechRate * 10} --quality 0 #{message.gsub(/["\$\r\1\2]/, '').inspect}"
+          $ACTIVE_TTS_PROCESS = spawn 'say', '-r', "#{$Settings.speechRate * 10}", '--quality', '0', message
           Process.wait($ACTIVE_TTS_PROCESS)
           $ACTIVE_TTS_PROCESS = -1
         end
