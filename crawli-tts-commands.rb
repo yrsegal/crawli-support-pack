@@ -109,6 +109,7 @@ class Window_AdvancedCommandPokemon
     if @commands && @tts
       out = toUnformattedText(@commands[self.index])
       out = "Stay silent" if out == "..."
+      out = "Unknown" if out == "???"
       Kernel.tts(out)
     end
   end
@@ -150,6 +151,7 @@ class Window_CommandPokemon
     if @commands && @tts
       out = @commands[self.index]
       out = "Stay silent" if out == "..."
+      out = "Unknown" if out == "???"
       Kernel.tts(out)
     end
   end

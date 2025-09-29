@@ -15,9 +15,6 @@ Skip block puzzles in School of Nightmares
 
 add day 1 text to blacksteeple
 
-XXXXX Add descriptions wherever possible to the intro(elided by picture association)
-XXXXX difficulty choice readout (elided by picture association)
-
 Make movement paths slower?
 
 warnings about the reina/kreiss paths
