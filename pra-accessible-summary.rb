@@ -163,6 +163,7 @@ def pbPokemonScreen
           sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [
             _INTL("Display BST"),
             _INTL("Pokemon Details"),
+            _INTL("Learnsets"),
             _INTL("Export Team"),
             _INTL("Cancel")
           ])
@@ -173,10 +174,13 @@ def pbPokemonScreen
             pbDisplayBSTData(pkmn)
           when 1 # Pokemon Details
             # Call the helper function we added earlier
-            torDisplayPokemonDetails(pkmn)          when 2
+            torDisplayPokemonDetails(pkmn)
+          when 2
+            showMovesetForMon(pkmn)
+          when 3
             teamtotext
             break # Exit menu after exporting
-          when -1, 2 # Cancel
+          when -1, 4 # Cancel
             break
           end
         end
@@ -636,6 +640,7 @@ module PRA_AccessibleSummaryPC
         sub_command = pbShowCommands(_INTL("Accessible Summary"), [
           _INTL("Display BST"),
           _INTL("Pokemon Details"),
+          _INTL("Learnset"),
           _INTL("Cancel")
         ])
 
@@ -644,7 +649,9 @@ module PRA_AccessibleSummaryPC
           pbDisplayBSTData(pokemon)
         when 1 # Pokemon Details
           torDisplayPokemonDetails(pokemon)
-        when -1, 2 # Cancel
+        when 2 # Learnset
+          showMovesetForMon(pokemon)
+        when -1, 3 # Cancel
           break
         end
       end
@@ -717,11 +724,12 @@ class PokemonStorageScreen
             pbSummary(selected, nil)
           elsif cmdAccessibleSummary != -1 && command == cmdAccessibleSummary
             loop do
-              sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [_INTL("Display BST"), _INTL("Pokemon Details"), _INTL("Cancel")])
+              sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [_INTL("Display BST"), _INTL("Pokemon Details"), _INTL("Learnset"), _INTL("Cancel")])
               case sub_command
               when 0; pbDisplayBSTData(pokemon)
               when 1; torDisplayPokemonDetails(pokemon)
-              when -1, 2; break
+              when 2; showMovesetForMon(pokemon)
+              when -1, 3; break
               end
             end
           elsif command == cmdMark
@@ -768,11 +776,12 @@ class PokemonStorageScreen
             pbSummary([-1, selected], nil)
           elsif cmdAccessibleSummary != -1 && command == cmdAccessibleSummary
             loop do
-              sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [_INTL("Display BST"), _INTL("Pokemon Details"), _INTL("Cancel")])
+              sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [_INTL("Display BST"), _INTL("Pokemon Details"), _INTL("Learnset"), _INTL("Cancel")])
               case sub_command
               when 0; pbDisplayBSTData(pokemon)
               when 1; torDisplayPokemonDetails(pokemon)
-              when -1, 2; break
+              when 2; showMovesetForMon(pokemon)
+              when -1, 3; break
               end
             end
           elsif command == cmdMark
@@ -852,11 +861,12 @@ cmdStoreWithdraw = -1; cmdItem = -1; cmdMark = -1; cmdRelease = -1
             elsif cmdAccessibleSummary != -1 && command == cmdAccessibleSummary
               pkmn_to_inspect = heldpoke || pokemon
               loop do
-                sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [_INTL("Display BST"), _INTL("Pokemon Details"), _INTL("Cancel")])
+                sub_command = @scene.pbShowCommands(_INTL("Accessible Summary"), [_INTL("Display BST"), _INTL("Pokemon Details"), _INTL("Learnset"), _INTL("Cancel")])
                 case sub_command
                 when 0; pbDisplayBSTData(pkmn_to_inspect)
                 when 1; torDisplayPokemonDetails(pkmn_to_inspect)
-                when -1, 2; break
+                when 2; showMovesetForMon(pokemon)
+                when -1, 3; break
                 end
               end
             elsif command == cmdStoreWithdraw
@@ -940,12 +950,14 @@ class PokeBattle_Scene
             sub_command = scene.pbShowCommands(_INTL("Accessible Summary"), [
               _INTL("Display BST"),
               _INTL("Pokemon Details"),
+              _INTL("Learnset"),
               _INTL("Cancel")
             ])
             case sub_command
             when 0; pbDisplayBSTData(party[pkmnindex])
             when 1; torDisplayPokemonDetails(party[pkmnindex])
-            when -1, 2; break
+            when 2; showMovesetForMon(party[pkmnindex])
+            when -1, 3; break
             end
           end
         end
