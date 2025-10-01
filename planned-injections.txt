@@ -1,3 +1,5 @@
+add skip for chrysalis courtyard statue pushing puzzle
+
 Make shuppets in wispy chasm static and interactable
 west gearen rotom stealth section
 Add a way to reset the strength puzzle in the Sanctuary
@@ -28,3 +30,4 @@ put in puzzle skips for the statue puzzles
 Accessible voltorb flip
 
 pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
+pathfinder - way to interrupt a long search
