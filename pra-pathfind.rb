@@ -373,8 +373,8 @@ end
         if foundEvent == nil
           break
         end
-        for eventCommand.code == 201 && eventCommand in foundEvent.list
-          if eventCommand.parameters[1] == eventDestination
+        for eventCommand in foundEvent.list
+          if eventCommand.code == 201 && eventCommand.parameters[1] == eventDestination
             eventsArray.delete(foundEvent)
             break
           end
