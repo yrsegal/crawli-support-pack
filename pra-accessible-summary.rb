@@ -210,10 +210,10 @@ def pbPokemonScreen
       elsif cmdItem >= 0 && command == cmdItem
         itemMenu(pkmnid, pkmn)
       elsif cmdRename >= 0 && command == cmdRename
-        species = getMonName(pkmn.species, pkmn.form)
+        species = getMonName(pkmn.species)
         $game_variables[5] = Kernel.pbMessageFreeText("#{species}'s nickname?", _INTL(""), false, 12)
         if pbGet(5) == ""
-          pkmn.name = getMonName(pkmn.species, pkmn.form)
+          pkmn.name = getMonName(pkmn.species)
           pbSet(5, pkmn.name)
         end
         if pbGet(5) != pkmn.name

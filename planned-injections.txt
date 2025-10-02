@@ -31,3 +31,5 @@ Accessible voltorb flip
 
 pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
 pathfinder - way to interrupt a long search
+manny in nightmare realm
+pokedex doesn't show up always after some point for new mons - why?
