@@ -1,20 +1,35 @@
-west gearen rotom stealth section
+ch8
 make skip in tale of two hearts
-heracross! fuck that! have one of the people offer to do it for you
+
+ch9
+west gearen rotom stealth section
 Karrina yells at Karen about being mean to blind people in the dodging segment and she actually goes "oh shit sorry" and skips that segment
-Lavender section, make it no longer a chase
-Game offers to remove step limits from Zor Labyrinth when you enter
+
+ch12
+heracross! fuck that! have one of the people offer to do it for you
 Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
-Better info for raid dens?
+
+ch13
+Game offers to remove step limits from Zor Labyrinth when you enter
+
+ch15
+Lavender section, make it no longer a chase
 Skip block puzzles in School of Nightmares
+manny in nightmare realm
+
+.kf
 xenogene stealth puzzle fix
 missing children 3 coliseum (v throws you a bone)
+
+
+misc
 
 Add sound cues to Alakazam maze (not necessary if pathfinder is done)
 Add sound cues to Goldenleaf Gym (not necessary if pathfinder is done)
 Add sound cues to chapter 12 maze (not necessary if pathfinder is done)
 
 add day 1/day 5 text to blacksteeple
+Better info for raid dens?
 
 Make movement paths slower?
 
@@ -23,4 +38,3 @@ Accessible voltorb flip
 
 pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
 pathfinder - way to interrupt a long search
-manny in nightmare realm

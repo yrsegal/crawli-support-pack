@@ -291,8 +291,12 @@ def get_teleport_destination_name(event)
     if command.code == 201 # Event command for "Transfer Player"
       map_id = command.parameters[1]
       # Use the Map Factory to get the destination map object
-      destination_map = $MapFactory.getMap(map_id)
-      return destination_map.name if destination_map
+      begin
+        destination_map = $MapFactory.getMap(map_id)
+        return destination_map.name if destination_map
+      rescue # Broken Teleport
+        return nil
+      end
     end
   end
   return nil # Return nil if it's not a teleport event
