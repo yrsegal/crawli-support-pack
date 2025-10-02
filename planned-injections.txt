@@ -1,13 +1,7 @@
-add skip for chrysalis courtyard statue pushing puzzle
-
-Make shuppets in wispy chasm static and interactable
-west gearen rotom stealth section
 Add a way to reset the strength puzzle in the Sanctuary
-Add sound cues to Goldenleaf Gym (not necessary if pathfinder is done)
+west gearen rotom stealth section
 make skip in tale of two hearts
-Add sound cues to Alakazam maze (not necessary if pathfinder is done)
 heracross! fuck that! have one of the people offer to do it for you
-Add sound cues to chapter 12 maze (not necessary if pathfinder is done)
 Karrina yells at Karen about being mean to blind people in the dodging segment and she actually goes "oh shit sorry" and skips that segment
 Lavender section, make it no longer a chase
 Game offers to remove step limits from Zor Labyrinth when you enter
@@ -18,6 +12,10 @@ Better info for raid dens?
 Skip block puzzles in School of Nightmares
 xenogene stealth puzzle fix
 missing children 3 coliseum (v throws you a bone)
+
+Add sound cues to Alakazam maze (not necessary if pathfinder is done)
+Add sound cues to Goldenleaf Gym (not necessary if pathfinder is done)
+Add sound cues to chapter 12 maze (not necessary if pathfinder is done)
 
 add day 1/day 5 text to blacksteeple
 
