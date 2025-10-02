@@ -334,6 +334,7 @@ end
     for eventCommand in event.list
       if eventCommand.code == 201
         eventDestination = eventCommand.parameters[1]
+        eventDestination = $game_variables[eventDestination] if eventCommand.parameters[0] == 1 # Variable
       end
     end
     if event.x == neighbourNode.x #y-axis
@@ -344,9 +345,13 @@ end
           break
         end
         for eventCommand in foundEvent.list
-          if eventCommand.code == 201 && eventCommand.parameters[1] == eventDestination
-            eventsArray.delete(foundEvent)
-            break
+          if eventCommand.code == 201
+            commandDestination = eventCommand.parameters[1]
+            commandDestination = $game_variables[commandDestination] if eventCommand.parameters[0] == 1 # Variable
+            if commandDestination == eventDestination
+              eventsArray.delete(foundEvent)
+              break
+            end
           end
         end
         i = i + 1
@@ -358,9 +363,13 @@ end
           break
         end
         for eventCommand in foundEvent.list
-          if eventCommand.code == 201 && eventCommand.parameters[1] == eventDestination
-            eventsArray.delete(foundEvent)
-            break
+          if eventCommand.code == 201
+            commandDestination = eventCommand.parameters[1]
+            commandDestination = $game_variables[commandDestination] if eventCommand.parameters[0] == 1 # Variable
+            if commandDestination == eventDestination
+              eventsArray.delete(foundEvent)
+              break
+            end
           end
         end
         i = i + 1
@@ -374,9 +383,13 @@ end
           break
         end
         for eventCommand in foundEvent.list
-          if eventCommand.code == 201 && eventCommand.parameters[1] == eventDestination
-            eventsArray.delete(foundEvent)
-            break
+          if eventCommand.code == 201
+            commandDestination = eventCommand.parameters[1]
+            commandDestination = $game_variables[commandDestination] if eventCommand.parameters[0] == 1 # Variable
+            if commandDestination == eventDestination
+              eventsArray.delete(foundEvent)
+              break
+            end
           end
         end
         i = i + 1
@@ -388,9 +401,13 @@ end
           break
         end
         for eventCommand in foundEvent.list
-          if eventCommand.code == 201 && eventCommand.parameters[1] == eventDestination
-            eventsArray.delete(foundEvent)
-            break
+          if eventCommand.code == 201
+            commandDestination = eventCommand.parameters[1]
+            commandDestination = $game_variables[commandDestination] if eventCommand.parameters[0] == 1 # Variable
+            if commandDestination == eventDestination
+              eventsArray.delete(foundEvent)
+              break
+            end
           end
         end
         i = i + 1
