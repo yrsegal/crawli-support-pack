@@ -34,6 +34,7 @@ InjectionHelper.defineMapPatch(418, 99) { |event|
           :ExitEventProcessing,
         :Done,
         [:When, 1, "No"],
+          :RestoreBackgroundSound,
           [:ShowText, "KAREN: Yeah, you're cooler than that."],
         :Done)
     end
