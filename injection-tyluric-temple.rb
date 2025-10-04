@@ -39,7 +39,7 @@ InjectionHelper.defineMapPatch(181) { |map|
       [:ShowChoices, ["Yes", "No"], 2],
       [:When, 0, "Yes"],
         [:PlaySoundEvent, 'SFX- GBC Teleport'],
-        [:TransferPlayer, :Constant, 181, 116, 9, :Up, true],
+        [:TransferPlayer, :Constant, 181, 116, 9, :Right, true],
       :Done,
       [:When, 1, "No"],
       :Done)
