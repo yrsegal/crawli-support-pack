@@ -15,8 +15,6 @@ BLACKSTEEPLE_ROBOTS.each { |robot, targetX, targetY|
           [:When, 1, "No"],
           :Done)
       end
-
-      next !matched.empty?
     }
   }
 }
@@ -42,7 +40,5 @@ InjectionHelper.defineMapPatch(443, 107) { |event|
           :Done,
         :Done)
     end
-
-    next choices
   }
 }

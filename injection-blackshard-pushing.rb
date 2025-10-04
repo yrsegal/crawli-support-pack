@@ -29,7 +29,5 @@ InjectionHelper.defineMapPatch(323, 52) { |event|
           :Done,
         :Done)
     end
-
-    next choices
   }
 }

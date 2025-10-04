@@ -6,8 +6,6 @@ InjectionHelper.defineMapPatch(339, 95) { |event|
     for insn in matched
       page.insertAfter(insn, [:ShowText, "And honey, if you're blind, here's a little secret! Don't tell anyone, but you can \\c[6]hold the [A] button!"])
     end
-
-    next !matched.empty?
   }
 }
 

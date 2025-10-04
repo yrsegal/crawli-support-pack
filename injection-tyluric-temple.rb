@@ -52,7 +52,6 @@ InjectionHelper.defineMapPatch(181, 54, 1) { |page|
     if matched
       page.insertAfter(matched,
         [:ShowText, "A whirlwind on the temple surface activated!"])
-      next true
     end
   }
 }
