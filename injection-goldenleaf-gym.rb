@@ -1,8 +1,8 @@
-InjectionHelper.defineMapPatch(401, 7, 0) { |page|
-  page.patch(:addskip) { |page|
+InjectionHelper.defineMapPatch(401, 7) { |event|
+  event.patch(:addskip) { |page|
     page.insertBeforeEnd(
-      [:ShowText, "The Rotoms seem strangely polite about you."],
-      [:ShowText, "They're willing to escort you alone, for some reason..."]
+      [:ShowText, "I'm kind of fed up with it, though."],
+      [:ShowText, "Want to just skip past it?"],
       [:When, 0, "Yes"],
         [:ChangeScreenColorTone, Tone.new(-255,-255,-255,0), 10],
         [:PlaySoundEvent, 'PRSFX- Teleport', 100, 100],
