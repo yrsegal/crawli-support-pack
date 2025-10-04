@@ -283,7 +283,7 @@ def pbShowInspect(msgwindow, commands, cmdIfCancel)
   loop do
     Graphics.update
     Input.update
-    @sprites["cmdwindow"].update
+    @sprites["cmdwindow"].update unless Input.trigger?(Input::L) || Input.trigger?(Input::R)
     msgwindow.update if msgwindow
     yield if block_given?
     if Input.trigger?(Input::B)
