@@ -6,7 +6,7 @@ def Kernel.pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0,defaultC
   oldlbl=msgwin.letterbyletter
   msgwin.letterbyletter=false
   if commands
-    cmdwindow=Window_CommandPokemon.new(commands)
+    cmdwindow=Window_CommandPokemon.new(commands, tts: false)
     cmdwindow.z=99999
     cmdwindow.visible=true
     cmdwindow.resizeToFit(cmdwindow.commands)
