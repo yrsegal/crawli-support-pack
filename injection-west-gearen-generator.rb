@@ -10,7 +10,7 @@ InjectionHelper.defineMapPatch(256, 41, 0) { |page|
         [:ChangeScreenColorTone, Tone.new(-255,-255,-255,0), 10],
         [:PlaySoundEvent, 'Exit Door', 100, 100],
         [:Wait, 10],
-        [:TransferPlayer, 271, 9, 39, :Up, true],
+        [:TransferPlayer, :Constant, 271, 9, 39, :Up, true],
         [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10],
       :Done,
       [:When, 1, "No"],

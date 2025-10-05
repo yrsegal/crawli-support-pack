@@ -1,7 +1,3 @@
-
-ch13
-Game offers to remove step limits from Zor Labyrinth when you enter
-
 ch15
 diamond route - regices disappear forever after being fought
 pearl route - aggrons disappear forever after being fought
