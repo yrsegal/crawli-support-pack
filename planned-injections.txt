@@ -1,11 +1,10 @@
-ch12
-heracross! fuck that! have one of the people offer to do it for you
-Turn beer glass hurlers into npcs who say they aren't gonna throw things at blind people, their friend Jeffery is blind
 
 ch13
 Game offers to remove step limits from Zor Labyrinth when you enter
 
 ch15
+diamond route - regices disappear forever after being fought
+pearl route - aggrons disappear forever after being fought
 Lavender section, make it no longer a chase
 Skip block puzzles in School of Nightmares
 manny in nightmare realm
@@ -16,6 +15,8 @@ missing children 3 coliseum (v throws you a bone)
 
 
 misc
+
+break down wait-linked text into sections?
 
 Add sound cues to Alakazam maze (not necessary if pathfinder is done)
 Add sound cues to Goldenleaf Gym (not necessary if pathfinder is done)

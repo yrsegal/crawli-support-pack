@@ -22,7 +22,7 @@ class PokemonAchievementsScene
         levelMax = @achievements[i][:milestones].length
         if desc != @lastdesc
           tts(_INTL(desc))
-          tts(_iNTL("Level: {1}/{2}",level,levelMax))
+          tts(_INTL("Level: {1}/{2}",level,levelMax))
           tts(_INTL("Progress: {1}/{2}",prog,goal))
           @lastdesc = desc
         end
