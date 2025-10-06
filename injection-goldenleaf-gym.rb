@@ -8,7 +8,7 @@ InjectionHelper.defineMapPatch(401, 7) { |event|
         [:PlaySoundEvent, 'PRSFX- Teleport', 100, 100],
         [:Wait, 12],
         [:ControlVariable, 370, :[]=, :Constant, 21],
-        [:TransferPlayer, 401, 24, 45, :Down, true],
+        [:TransferPlayer, :Constant, 401, 24, 45, :Down, true],
         [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10],
       :Done,
       [:When, 1, "No"],
