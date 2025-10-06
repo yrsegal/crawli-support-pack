@@ -439,7 +439,8 @@ Ruthless Pokemon can call for help!
 Weather can sometimes be altered! etc.",
   "V10Choice_1" => "Hand It Over",
   "V10Choice_2" => "Abandon Them",
-  "V13Advertisement" => "We are hiring!
+  "V13Advertisement" => "A blue board reads:
+We are hiring!
 We're looking for hard working students who are willing to put in the work!
 Requirements:
 Determined
@@ -447,7 +448,8 @@ Math proficient
 Extensive medical knowledge
 Internship Experience
 Medi Pharmaceutical",
-  "V13Advertisement_1" => "We are hiring!
+  "V13Advertisement_1" => "A red board reads:
+We are hiring!
 Yesss, we're looking for students who are... I dunno, good at drama or something! Make us laugh! Snatch some wigs! Do something!
 Requirements:
 Studious
@@ -455,7 +457,8 @@ English proficient
 Extensive Drama knowledge (Tea)
 10 or more on-stage experiences
 Dream Drama Club",
-  "V13Advertisement_2" => "We are hiring. Now.
+  "V13Advertisement_2" => "A yellow board reads:
+We are hiring. Now.
 We at District Electricians are looking for students who exvcel at Electrical Engineering.
 Requirements:
 Studious
@@ -463,7 +466,8 @@ Proficient in engineering
 Proficient in engineering
 3 years of experience
 District Electricians",
-  "V13Advertisement_1" => "We are hiring!
+  "V13Advertisement_3" => "A green board reads:
+We are hiring!
 We are looking for students who have a love for the outdoors and all things botanical! Hug a tree!
 Requirements:
 Whimsical
@@ -500,7 +504,7 @@ I thought I actually had potential... But I guess not. The doctors say I don't h
 It's cruel, isn't it? Life is just so cruel.
 But this is the path me and all the others chose. Humanity has nothing left but us.
 ...Is it all worth it in the end, though? What do we want to survive for? ...Anyway, I'm losing energy fast.
-  Garufa Incorporated is our last hope. Please, save us.",
+Garufa Incorporated is our last hope. Please, save us.",
   "V13Choice_1" => "Destruction",
   "V13Choice_2" => "The world",
   "V13Monitor4" => "Scan Patient",
