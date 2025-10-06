@@ -428,6 +428,8 @@ class VoltorbFlip
 
             voltorbfliphelpercrawli_readouttile(doRow: readRow, doCol: readCol)
           end
+        else
+          Kernel.pbMessage(_INTL("No hints are available right now. Make an educated guess!"))
         end
       end
     ### /MODDED
