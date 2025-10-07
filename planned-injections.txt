@@ -12,7 +12,5 @@ Better info for raid dens?
 Make movement paths slower?
 
 
-Accessible voltorb flip
-
 pathfinder mod - todo make mode for excluding inaccessible objects (take into account ledges?)
 pathfinder - way to interrupt a long search

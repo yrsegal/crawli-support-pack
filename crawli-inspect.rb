@@ -37,11 +37,9 @@ def pbShowBattleStats(pkmn)
   if BlindstepActive
     report.push(_INTL("Species: {1}", getMonName(pkmn.species)))
   end
-  if pkmn.pokemon.isPulse? || pkmn.pokemon.isRift? || pkmn.pokemon.isPerfection? || pkmn.isMega? || pkmn.isPrimal? || pkmn.isUltra?
-    form = pkmn.pokemon.getFormName
-    form = form.gsub(/\b(?: Form| Forme)\b/, '')
-    report.push(_INTL("Form: {1}", form))
-  end
+  form = pkmn.pokemon.getFormName
+  form = form.gsub(/\b(?: Form| Forme)\b/, '')
+  report.push(_INTL("Form: {1}", form))
   if BlindstepActive
     if !(@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index)) && !@battle.opponent
       report.push(_INTL("Owned: {1}", $Trainer.pokedex.dexList[pkmn.species][:owned?] ? "Yes" : "No"))
