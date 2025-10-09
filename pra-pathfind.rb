@@ -80,7 +80,7 @@ alias_method :access_mod_original_initialize, :initialize
     # Now, set up our mod's variables correctly
     @mapevents = []
     @selected_event_index = -1
-    @event_filter_modes = [:all, :connections, :npcs, :items, :merchants, :signs, :hidden_items]
+    @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
     @event_filter_index = 0
     @hm_toggle_modes = [:off, :surf_only, :surf_and_waterfall]
     @hm_toggle_index = 0 # Default to :off
@@ -138,9 +138,9 @@ end
 
 def cycle_event_filter(direction = 1)
   # --- Safeguard to initialize variables if they don't exist ---
-  if @event_filter_modes.nil?
+  if @event_filter_modes.nil? || @event_filter_modes.length != 8
     # This will run once when loading an old save file
-    @event_filter_modes = [:all, :connections, :npcs, :items, :merchants, :signs, :hidden_items]
+    @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
     @event_filter_index = 0
   end
   
@@ -262,6 +262,11 @@ end
 def is_item_event?(event)
   return false if !event
   return event.character_name.start_with?("Object ball")
+end
+
+def is_z_cell_event?(event)
+  return false if !event
+  return event.character_name.start_with?("Object Cell")
 end
 
 def is_hidden_item_event?(event)
@@ -517,10 +522,10 @@ end
 
 def populate_event_list
   # --- Safeguard to initialize variables if they don't exist ---
-  if @event_filter_modes.nil?
+  if @event_filter_modes.nil? || @event_filter_modes.length != 8
     @mapevents = []
     @selected_event_index = -1
-    @event_filter_modes = [:all, :connections, :npcs, :items, :merchants, :signs, :hidden_items]
+    @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
     @event_filter_index = 0
   end
 
@@ -548,6 +553,8 @@ def populate_event_list
       other_events.push(event) if is_npc_event?(event)
     when :items
       other_events.push(event) if is_item_event?(event)
+    when :z_cells
+      other_events.push(event) if is_z_cell_event?(event)
     when :merchants
       other_events.push(event) if is_merchant_event?(event)
     when :signs
