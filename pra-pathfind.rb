@@ -270,7 +270,8 @@ def is_z_cell_event?(event)
 end
 
 def is_hidden_item_event?(event)
-  return event.name == "HiddenItem"
+  hiName = event.name.gsub(/\s/, '')
+  return hiName == "HiddenItem" || (hiName == 'HiddenCoins' && $PokemonBag.pbQuantity(:COINCASE)>0)
 end
 
 def is_npc_event?(event)

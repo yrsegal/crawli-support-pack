@@ -64,3 +64,33 @@ ItemHandlers::UseInField.add(:ITEMFINDER, proc { |item|
     end
   end
 })
+
+def pbClosestHiddenItem
+  result = []
+  playerX=$game_player.x
+  playerY=$game_player.y
+  for event in $game_map.events.values
+    ### MODDED/
+    hiName = event.name.gsub(/\s/, '')
+    next if hiName != "HiddenItem" && !(hiName == 'HiddenCoins' && $PokemonBag.pbQuantity(:COINCASE)>0)
+    ### /MODDED
+    next if (playerX-event.x).abs>=8
+    next if (playerY-event.y).abs>=6
+    next if $game_self_switches[[$game_map.map_id,event.id,"A"]]
+    next if $game_self_switches[[$game_map.map_id,event.id,"B"]]
+    next if $game_self_switches[[$game_map.map_id,event.id,"C"]]
+    next if $game_self_switches[[$game_map.map_id,event.id,"D"]]
+    result.push(event)
+  end
+  return nil if result.length==0
+  ret=nil
+  retmin=0
+  for event in result
+    dist=(playerX-event.x).abs+(playerY-event.y).abs
+    if !ret || retmin>dist
+      ret=event
+      retmin=dist
+    end
+  end
+  return ret
+end
