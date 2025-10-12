@@ -214,12 +214,20 @@ def is_path_passable?(x, y, d)
     @hm_toggle_index = 0
   end
 
+  # Handle holes
+  for event in $game_map.events.values
+    if event.x == x && event.y == y && is_teleport_event?(event)
+      return false
+    end
+  end
+
   # First, check if the tile is normally passable
   return true if passable?(x, y, d)
   
   # If not, check if it's an HM obstacle the player can pass with the toggle
   current_mode = @hm_toggle_modes[@hm_toggle_index]
   return false if current_mode == :off
+
 
   # Get the coordinates of the tile we are trying to move to
   new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
