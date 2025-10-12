@@ -37,7 +37,7 @@ def pbShowBattleStats(pkmn)
   if BlindstepActive
     report.push(_INTL("Species: {1}", getMonName(pkmn.species)))
   end
-  form = pkmn.pokemon.getFormName
+  form = pkmn.pokemon.getFormName || "Normal Form"
   form = form.gsub(/\b(?: Form| Forme)\b/, '')
   report.push(_INTL("Form: {1}", form))
   if BlindstepActive
