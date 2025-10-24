@@ -1,4 +1,4 @@
-InjectionHelper.defineMapPatch(119, 48, 1) { |event|
+InjectionHelper.defineMapPatch(119, 48, 0) { |event|
   event.patch(:droprock) { |page|
     page.insertBeforeEnd([:ControlVariable, 307, :[]=, :Constant, 1])
   }
