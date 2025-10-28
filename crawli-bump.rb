@@ -36,6 +36,8 @@ class Game_Player
     return pbAccessibilitySEPlay("bump-rockclimb") if eventName.start_with?("RockClimb") && eventHasCommands
     # check terrains
     return pbAccessibilitySEPlay("bump-water") if pbIsJustWaterTag?(terrain)
+    # check terrains
+    return pbAccessibilitySEPlay("bump-lava") if pbIsLavaTag?(terrain)
     # bad water
     return pbAccessibilitySEPlay("bump-grime") if pbIsGrimeTag?(terrain)
     # waterfall
