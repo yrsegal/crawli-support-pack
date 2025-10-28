@@ -238,7 +238,7 @@ def is_path_passable?(x, y, d)
   terrain_tag = self.map.terrain_tag(new_x, new_y)
 
   # Check for Surf
-  if pbIsPassableWaterTag?(terrain_tag)
+  if pbIsPassableWaterTag?(terrain_tag) || pbIsPassableLavaTag?(terrain_tag)
     return true if current_mode == :surf_only || current_mode == :surf_and_waterfall
   end
   
