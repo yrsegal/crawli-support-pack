@@ -11,7 +11,7 @@ class Scene_Pokegear
     @cmdTutor=-1
     @buttons = []
     ### MODDED/
-    @buttons[@cmdTime=@buttons.length] = "Time" if shouldDivergeTime?
+    @buttons[@cmdTime=@buttons.length] = "Time and Weather" if shouldDivergeTime?
     ### /MODDED
     @buttons[@cmdMap=@buttons.length] = "Map"
     @buttons[@cmdJukebox=@buttons.length] = "Jukebox"
@@ -30,6 +30,7 @@ class Scene_Pokegear
       time = pbGetTimeNow
       tts(time.strftime("%A %e %B"))
       tts("Current Time: " + time.strftime("%k %M"))
+      tts("Current Weather: " + $game_screen.weather_type)
       tts("Location: " + $game_map.name.to_s)
     end
 
