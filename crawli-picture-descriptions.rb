@@ -563,7 +563,13 @@ Clean bedding
 3 eggs / 10 gallons of milk
 If our demands are not met, then Sashila Village will be turned into a frozen wasteland.
 Please deliver these items to me at the ugly fort right near Zorrialyn Coast.",
-  "WeirdDiaryMemory" => "You see a vision of the apartment to the right of the past's Route 3, in the north of Kugearen..."
+  "WeirdDiaryMemory" => "You see a vision of the apartment to the right of the past's Route 3, in the north of Kugearen...",
+  "PlayerAeroSoul" => "Aero is with you.",
+  "PlayerAeviaSoul" => "Aevia is with you. Once again, you are whole.",
+  "PlayerAevisSoul" => "Aevis is with you.",
+  "PlayerAlainSoul" => "Alain is with you.",
+  "PlayerAriaSoul" => "Aria is with you.",
+  "PlayerAxelSoul" => "Axel is with you.",
 }
 
 class Game_Picture
