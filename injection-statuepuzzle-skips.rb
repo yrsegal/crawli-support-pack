@@ -46,7 +46,7 @@ InjectionHelper.defineMapPatch(250, 38, 4) { |page|
   }
 }
 
-InjectionHelper.defineMapPatch(250, 38, 0) { |page|
+InjectionHelper.defineMapPatch(111, 77, 0) { |page|
   page.patch(:addpuzzleskip) {
     page.insertBeforeEnd(
       [:ConditionalBranch, :SelfSwitch, 'A', false],
