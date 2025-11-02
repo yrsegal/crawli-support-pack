@@ -41,7 +41,7 @@ def pbShowBattleStats(pkmn)
   form = form.gsub(/\b(?: Form| Forme)\b/, '')
   report.push(_INTL("Form: {1}", form))
   if BlindstepActive
-    if !(@battle.pbOwnedByPlayer?(pkmn.index) || @battle.pbIsDoubleBattler?(pkmn.index)) && !@battle.opponent
+    if @battle.pbIsOpposing?(pkmn.index) && !@battle.opponent
       report.push(_INTL("Owned: {1}", $Trainer.pokedex.dexList[pkmn.species][:owned?] ? "Yes" : "No"))
     end
     report.push(_INTL("Gender: {1}", ["Male", "Female"][pkmn.gender])) if pkmn.gender < 2
