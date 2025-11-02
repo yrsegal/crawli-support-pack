@@ -4,7 +4,7 @@ InjectionHelper.defineMapPatch(414, 5) { |event|
 
     if litMessage
       page.insertBefore(litMessage,
-        [:Script, "$game_variables[1] = [550, [0, $game_variables[115]].max].min * 100 / 550"]
+        [:Script, "$game_variables[1] = [550, [0, $game_variables[115]].max].min * 100 / 550"],
         [:ShowText, "It's currently \\v[1]% of the way there!"])
     end
   }
