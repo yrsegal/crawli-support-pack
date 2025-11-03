@@ -30,7 +30,11 @@ class Scene_Pokegear
       time = pbGetTimeNow
       tts(time.strftime("%A %e %B"))
       tts("Current Time: " + time.strftime("%k %M"))
-      tts("Current Weather: " + $game_screen.weather_type)
+      if $game_screen.weather_type == 0
+        tts("Current Weather: None")
+      elsif $game_screen.weather_type.is_a?(Symbol)
+        tts("Current Weather: " + $game_screen.weather_type)
+      end
       tts("Location: " + $game_map.name.to_s)
     end
 
