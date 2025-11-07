@@ -33,7 +33,7 @@ class Scene_Pokegear
       if $game_screen.weather_type == 0
         tts("Current Weather: None")
       elsif $game_screen.weather_type.is_a?(Symbol)
-        tts("Current Weather: " + $game_screen.weather_type)
+        tts("Current Weather: " + $game_screen.weather_type.to_s)
       end
       tts("Location: " + $game_map.name.to_s)
     end
