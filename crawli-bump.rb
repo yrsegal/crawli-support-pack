@@ -50,3 +50,14 @@ class Game_Player
     pbSEPlay("bump")
   end
 end
+
+class Interpreter
+  def pbPushThisBoulder
+    if $PokemonMap.strengthUsed && pbPushThisEvent
+      pbAccessibilitySEPlay("strengthpush")
+      return true
+    end
+    pbAccessibilitySEPlay("bump-strength")
+    return false
+  end
+end
