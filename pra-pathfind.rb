@@ -189,8 +189,8 @@ def rename_selected_event
     key = "#{map_id};#{x};#{y}"
     value = {
       map_name: map_name,
-      event_name: new_name,
-      description: new_desc || ""
+      event_name: new_name.strip,
+      description: (new_desc || "").strip
     }
 
     # Update the in-memory hash
@@ -548,6 +548,16 @@ def populate_event_list
     next if !event.list || event.list.size <= 1
     next if event.trigger == 3 || event.trigger == 4 # Ignore Autorun and Parallel
 
+    # Create a unique key to check for a custom name
+    key = "#{$game_map.map_id};#{event.x};#{event.y}"
+    custom_name_data = $custom_event_names[key]
+
+    # If a custom name exists, check if it's "ignore" (case-insensitive)
+    if custom_name_data && custom_name_data[:event_name] &&
+       custom_name_data[:event_name].strip.downcase == "ignore"
+      next # Skip this event and move to the next one
+    end
+    
     # Apply the selected filter
     case current_filter
     when :all
