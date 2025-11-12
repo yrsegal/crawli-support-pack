@@ -3,7 +3,7 @@ InjectionHelper.defineMapPatch(198, 79) { |event|
     matched = page.lookForAll([:ShowText, /in the right one\./]) +
               page.lookForAll([:ShowTextContinued, /in the right one\./]) +
               page.lookForAll([:ShowText, /yield some results\?/]) +
-              page.lookForAll([:ShowTextContinued, /yield some results\?/]) +
+              page.lookForAll([:ShowTextContinued, /yield some results\?/])
 
     for insn in matched
       page.insertAfter(insn,
