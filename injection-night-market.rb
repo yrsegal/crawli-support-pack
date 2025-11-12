@@ -1,4 +1,4 @@
-InjectionHelper.defineMapPatch(198, 79) { |map|
+InjectionHelper.defineMapPatch(198, 79) { |event|
   event.patch(:puzzleskip) { |page|
     matched = page.lookForAll([:ShowText, /in the right one\./]) +
               page.lookForAll([:ShowTextContinued, /in the right one\./]) +
@@ -33,7 +33,7 @@ InjectionHelper.defineMapPatch(198, 79) { |map|
   }
 }
 
-InjectionHelper.defineMapPatch(198, 84) { |map|
+InjectionHelper.defineMapPatch(198, 84) { |event|
   event.patch(:puzzleskip) { |page|
     matched = page.lookForAll([:ShowText, /Just do these steps in order\./]) +
               page.lookForAll([:ShowTextContinued, /Just do these steps in order\./])
