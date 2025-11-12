@@ -61,6 +61,46 @@ def Kernel.pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0,defaultC
   return ret
 end
 
+def Kernel.pbShowCommands(msgwindow,commands=nil,cmdIfCancel=0,defaultCmd=0)
+  ret=0
+  if commands
+    pbSEPlay("navopen") if msgwindow
+    cmdwindow=Window_CommandPokemon.new(commands)
+    cmdwindow.z=99999
+    cmdwindow.visible=true
+    cmdwindow.resizeToFit(cmdwindow.commands)
+    pbPositionNearMsgWindow(cmdwindow,msgwindow,:right)
+    cmdwindow.index=defaultCmd
+    command=0
+    loop do
+      Graphics.update
+      Input.update
+      cmdwindow.update
+      msgwindow.update if msgwindow
+      yield if block_given?
+      if Input.trigger?(Input::B)
+        if cmdIfCancel>0
+          command=cmdIfCancel-1
+          pbWait(2)
+          break
+        elsif cmdIfCancel<0
+          command=cmdIfCancel
+          pbWait(2)
+          break
+        end
+      end
+      if Input.trigger?(Input::C)
+        command=cmdwindow.index
+        break
+      end
+      pbUpdateSceneMap
+    end
+    ret=command
+    cmdwindow.dispose
+    Input.update
+  end
+  return ret
+end
 
 def Kernel.pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
   return if !msgwindow

@@ -125,7 +125,6 @@ class Window_CommandPokemon
   def initialize(commands,width=nil,tts:true)
     @tts=tts
     crawlittscommands_old_initialize(commands,width)
-    pbSEPlay("navopen")
     speak_command(0) if @commands && @commands[0] && @tts
   end
 

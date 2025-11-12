@@ -1132,7 +1132,7 @@ end
 def save_custom_names
   # --- Documentation Header ---
   header = <<~TEXT
-    # Pokémon Reborn Access - Custom Event Names
+    # Pokémon Rejuvenation Access - Custom Event Names
     # This file allows you to provide custom, meaningful names for in-game events.
     # The mod will automatically read this file when the game starts.
     #
@@ -1153,10 +1153,10 @@ def save_custom_names
     # [https://github.com/fclorenzo/pkreborn-access]
     #
     # Link to the community-managed Google Doc:
-    # [https://docs.google.com/document/d/1OCNpQe4GQEQAycn-1AK4IINBfW09BkNd49YbTn7hiv0/edit?usp=sharing]
+    # (None currently, for Rejuvenation)
   TEXT
 
-  File.open(CUSTOM_NAMES_FILE, "w") do |file|
+  File.open(CUSTOM_NAMES_FILE, "wb") do |file|
     # Write the header to the file
     file.puts(header)
     
