@@ -61,10 +61,15 @@ def Kernel.pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0,defaultC
   return ret
 end
 
+class Interpreter
+  attr_reader :message_waiting
+end
+
 def Kernel.pbShowCommands(msgwindow,commands=nil,cmdIfCancel=0,defaultCmd=0)
   ret=0
   if commands
-    pbSEPlay("navopen") if msgwindow
+    interp = pbMapInterpreter
+    pbSEPlay("navopen", 100, 120) if msgwindow || (interp && interp.message_waiting)
     cmdwindow=Window_CommandPokemon.new(commands)
     cmdwindow.z=99999
     cmdwindow.visible=true
