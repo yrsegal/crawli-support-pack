@@ -306,8 +306,9 @@ def get_teleport_destination_name(event)
       map_id = command.parameters[1]
       # Use the Map Factory to get the destination map object
       begin
-        destination_map = $MapFactory.getMap(map_id)
-        return destination_map.name if destination_map
+        mapname=pbGetMapNameFromId(map_id)
+        mapname.gsub!(/\\PN/,$Trainer.name)
+        return mapname
       rescue # Broken Teleport
         return nil
       end
