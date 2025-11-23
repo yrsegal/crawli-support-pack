@@ -3,7 +3,7 @@ class PokemonScreen
   # Create a copy of the original pbPokemonScreen method to modify
   alias_method :accessibility_mod_original_pbPokemonScreen, :pbPokemonScreen
 
-def pbPokemonScreen
+  def pbPokemonScreen
     @scene.pbStartScene(@party, @party.length > 1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."), nil)
     loop do
       @scene.pbSetHelpText(@party.length > 1 ? _INTL("Choose a Pokémon.") : _INTL("Choose Pokémon or cancel."))
@@ -283,37 +283,37 @@ class FakeMonData
     @formData = formData
   end
 
-  def mon; @formData[:mon] || @data.mon; end
-  def name; @formData[:name] || @data.name; end
-  def dexnum; @formData[:dexnum] || @data.dexnum; end
-  def Type1; @formData[:Type1] || @data.Type1; end
-  def Type2; @formData[:Type2] || @data.Type2; end
-  def BaseStats; @formData[:BaseStats] || @data.BaseStats; end
-  def EVs; @formData[:EVs] || @data.EVs; end
-  def Abilities; @formData[:Abilities] || @data.Abilities; end
-  def GrowthRate; @formData[:GrowthRate] || @data.GrowthRate; end
-  def GenderRatio; @formData[:GenderRatio] || @data.GenderRatio; end
-  def BaseEXP; @formData[:BaseEXP] || @data.BaseEXP; end
-  def CatchRate; @formData[:CatchRate] || @data.CatchRate; end
-  def Happiness; @formData[:Happiness] || @data.Happiness; end
-  def EggSteps; @formData[:EggSteps] || @data.EggSteps; end
-  def EggMoves; @formData[:EggMoves] || @data.EggMoves; end
-  def Moveset; @formData[:Moveset] || @data.Moveset; end
-  def compatiblemoves; @formData[:compatiblemoves] || @data.compatiblemoves; end
-  def moveexceptions; @formData[:moveexceptions] || @data.moveexceptions; end
-  def shadowmoves; @formData[:shadowmoves] || @data.shadowmoves; end
-  def Color; @formData[:Color] || @data.Color; end
-  def Habitat; @formData[:Habitat] || @data.Habitat; end
-  def EggGroups; @formData[:EggGroups] || @data.EggGroups; end
-  def Height; @formData[:Height] || @data.Height; end
-  def Weight; @formData[:Weight] || @data.Weight; end
-  def kind; @formData[:kind] || @data.kind; end
-  def dexentry; @formData[:dexentry] || @data.dexentry; end
-  def BattlerPlayerY; @formData[:BattlerPlayerY] || @data.BattlerPlayerY; end
-  def BattlerEnemyY; @formData[:BattlerEnemyY] || @data.BattlerEnemyY; end
-  def BattlerAltitude; @formData[:BattlerAltitude] || @data.BattlerAltitude; end
-  def preevo; @formData[:preevo] || @data.preevo; end
-  def evolutions; @formData[:evolutions] || @data.evolutions; end
+  def mon() = @formData[:mon] || @data.mon
+  def name() = @formData[:name] || @data.name
+  def dexnum() = @formData[:dexnum] || @data.dexnum
+  def Type1() = @formData[:Type1] || @data.Type1
+  def Type2() = @formData[:Type2] || @data.Type2
+  def BaseStats() = @formData[:BaseStats] || @data.BaseStats
+  def EVs() = @formData[:EVs] || @data.EVs
+  def Abilities() = @formData[:Abilities] || @data.Abilities
+  def GrowthRate() = @formData[:GrowthRate] || @data.GrowthRate
+  def GenderRatio() = @formData[:GenderRatio] || @data.GenderRatio
+  def BaseEXP() = @formData[:BaseEXP] || @data.BaseEXP
+  def CatchRate() = @formData[:CatchRate] || @data.CatchRate
+  def Happiness() = @formData[:Happiness] || @data.Happiness
+  def EggSteps() = @formData[:EggSteps] || @data.EggSteps
+  def EggMoves() = @formData[:EggMoves] || @data.EggMoves
+  def Moveset() = @formData[:Moveset] || @data.Moveset
+  def compatiblemoves() = @formData[:compatiblemoves] || @data.compatiblemoves
+  def moveexceptions() = @formData[:moveexceptions] || @data.moveexceptions
+  def shadowmoves() = @formData[:shadowmoves] || @data.shadowmoves
+  def Color() = @formData[:Color] || @data.Color
+  def Habitat() = @formData[:Habitat] || @data.Habitat
+  def EggGroups() = @formData[:EggGroups] || @data.EggGroups
+  def Height() = @formData[:Height] || @data.Height
+  def Weight() = @formData[:Weight] || @data.Weight
+  def kind() = @formData[:kind] || @data.kind
+  def dexentry() = @formData[:dexentry] || @data.dexentry
+  def BattlerPlayerY() = @formData[:BattlerPlayerY] || @data.BattlerPlayerY
+  def BattlerEnemyY() = @formData[:BattlerEnemyY] || @data.BattlerEnemyY
+  def BattlerAltitude() = @formData[:BattlerAltitude] || @data.BattlerAltitude
+  def preevo() = @formData[:preevo] || @data.preevo
+  def evolutions() = @formData[:evolutions] || @data.evolutions
 end
 
 
@@ -800,12 +800,20 @@ class PokemonStorageScreen
         selected = @scene.pbSelectBox(@storage.party)
         # ... (original logic for Close box, empty selection, box name, shortcuts, etc.) ...
         if selected && selected[0] == -3 # Close box
-          if pbHeldPokemon; pbDisplay(_INTL("You're holding a Pokémon!")); next; end
-          break if pbConfirm(_INTL("Exit from the Box?")); next
+          if pbHeldPokemon
+            pbDisplay(_INTL("You're holding a Pokémon!"))
+            next
+          end
+          break if pbConfirm(_INTL("Exit from the Box?"))
+          next
         end
         if selected == nil
-          if pbHeldPokemon; pbDisplay(_INTL("You're holding a Pokémon!")); next; end
-          break unless pbConfirm(_INTL("Continue Box operations?")); next
+          if pbHeldPokemon
+            pbDisplay(_INTL("You're holding a Pokémon!"))
+            next
+          end
+          break if pbConfirm(_INTL("Continue Box operations?"))
+          next
         elsif !Input.press?(Input::CTRL) && selected[0] == -4 # Box name
           pbBoxCommands
         # ... (rest of original logic from Storage.rb) ...
@@ -820,8 +828,8 @@ class PokemonStorageScreen
             end
           else
             # --- MODIFICATION FOR MOVE MODE ---
-commands = []; cmdMove = -1; cmdSummary = -1; cmdAccessibleSummary = -1; cmdMultiMove = -1
-cmdStoreWithdraw = -1; cmdItem = -1; cmdMark = -1; cmdRelease = -1
+            commands = []; cmdMove = -1; cmdSummary = -1; cmdAccessibleSummary = -1; cmdMultiMove = -1
+            cmdStoreWithdraw = -1; cmdItem = -1; cmdMark = -1; cmdRelease = -1
             commands[cmdMove = commands.length] = _INTL("Move")
             commands[cmdSummary = commands.length] = _INTL("Summary")
             if (pokemon && !pokemon.isEgg?) || (heldpoke && !heldpoke.isEgg?)
