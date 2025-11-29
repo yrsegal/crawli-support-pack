@@ -72,7 +72,7 @@ InjectionHelper.defineMapPatch(144, 33) { |event|
     event.pages[pageid].patch(:skipiftaken) { |page|
       page.insertAtStart(
         [:ConditionalBranch, :SelfSwitch, 'A', true],
-          [:ControlVariable, 685, :[]=, :Constant, 45 + i * 2],
+          [:ControlVariable, 685, :[]=, :Constant, 45 + pageid * 2],
           :ExitEventProcessing,
         :Done)
     }
