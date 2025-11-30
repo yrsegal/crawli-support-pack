@@ -545,7 +545,49 @@ def populate_event_list
   connections = []
   other_events = []
 
+  allevents = []
+
   for event in $game_map.events.values
+    allevents.push(event)
+  end
+
+  if $game_map.has_connections
+    positions = []
+    for x in 0...$game_map.width
+      positions.push([x,                    0, x,               -1, 4])
+      positions.push([x, $game_map.height - 1, x, $game_map.height, 6])
+    end
+
+    for y in 0...$game_map.height
+      positions.push([0,                   y,              -1, y, 8])
+      positions.push([$game_map.width - 1, y, $game_map.width, y, 2])
+    end
+
+    for x, y, checkx, checky, direction in positions
+
+      next unless $game_map.passable?(x, y, direction)
+
+      # Create a unique key to check for a custom name
+      key = "#{$game_map.map_id};#{x};#{y}"
+      custom_name_data = $custom_event_names[key]
+
+      # If a custom name exists, check if it's "ignore" (case-insensitive)
+      if custom_name_data && custom_name_data[:event_name] &&
+         custom_name_data[:event_name].strip.downcase == "ignore"
+        next # Skip this event and move to the next one
+      end
+
+      newmap = $MapFactory.getNewMap(checkx, checky)
+      if newmap
+        fakeev = RPG::Event.new(x, y)
+        fakeev.newPage { |page| page.playerTouch([:TransferPlayer, :Constant, *newmap, :Up, true], :Done) }
+        gameev = Game_Event.new($game_map.map_id, fakeev, map)
+        allevents.push(gameev)
+      end
+    end
+  end
+
+  for event in allevents
     next if !event.list || event.list.size <= 1
     next if event.trigger == 3 || event.trigger == 4 # Ignore Autorun and Parallel
 
@@ -579,20 +621,21 @@ def populate_event_list
       other_events.push(event) if is_merchant_event?(event)
     when :signs
       other_events.push(event) if is_sign_event?(event)
-      when :hidden_items  # --- ADD THIS NEW CASE ---
+    when :hidden_items  # --- ADD THIS NEW CASE ---
       other_events.push(event) if is_hidden_item_event?(event)
     end
   end
+
   # Run de-duplication on connections, regardless of filter
   reduceEventsInLanes(connections)
 
   # Combine the lists and sort
   @mapevents = other_events + connections
-# Sort the final list by distance only if the toggle is on
-    if @sort_by_distance
-      @mapevents.sort! { |a, b| distance(@x, @y, a.x, a.y) <=> distance(@x, @y, b.x, b.y) }
-    end
-    @selected_event_index = @mapevents.empty? ? -1 : 0
+  # Sort the final list by distance only if the toggle is on
+  if @sort_by_distance
+    @mapevents.sort! { |a, b| distance(@x, @y, a.x, a.y) <=> distance(@x, @y, b.x, b.y) }
+  end
+  @selected_event_index = @mapevents.empty? ? -1 : 0
 end
 
   def convertRouteToInstructions(route)
