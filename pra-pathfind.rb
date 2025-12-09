@@ -7,7 +7,7 @@ class Game_Player < Game_Character
     # Then, execute our mod's logic
     # If not moving
     unless moving?
-# Cycle event filter (O)
+      # Cycle event filter (O)
       if Input.triggerex?(0x4F)
         cycle_event_filter(1)
       # Cycle event filter backwards (I)
@@ -15,15 +15,15 @@ class Game_Player < Game_Character
         cycle_event_filter(-1)
       end
 
-        # Toggle sort by distance (Shift+H)
-        if Input.pressex?(0x10) && Input.triggerex?(0x48)
-          @sort_by_distance = !@sort_by_distance
-          tts("Sort by distance: #{@sort_by_distance ? 'On' : 'Off'}")
-      
-        # Cycle HM pathfinding toggle (H)
-    elsif Input.triggerex?(0x48)
-          cycle_hm_toggle
-        end
+      # Toggle sort by distance (Shift+H)
+      if Input.pressex?(0x10) && Input.triggerex?(0x48)
+        @sort_by_distance = !@sort_by_distance
+        tts("Sort by distance: #{@sort_by_distance ? 'On' : 'Off'}")
+    
+      # Cycle HM pathfinding toggle (H)
+      elsif Input.triggerex?(0x48)
+        cycle_hm_toggle
+      end
 
       # Refresh the event list (F5)
       if Input.triggerex?(0x74)
@@ -60,19 +60,19 @@ class Game_Player < Game_Character
           announce_selected_event
         end
 
-      # Announce coordinates (Shift+P)
-      if Input.pressex?(0x10) && Input.triggerex?(0x50)
-        announce_selected_coordinates
+        # Announce coordinates (Shift+P)
+        if Input.pressex?(0x10) && Input.triggerex?(0x50)
+          announce_selected_coordinates
 
-        # PATHFIND to the current event (P)
-      elsif Input.triggerex?(0x50)
+          # PATHFIND to the current event (P)
+        elsif Input.triggerex?(0x50)
           pathfind_to_selected_event
         end
       end
     end
   end
 
-alias_method :access_mod_original_initialize, :initialize
+  alias_method :access_mod_original_initialize, :initialize
   def initialize(*args)
     # Call the original initialize method first to set up the player
     access_mod_original_initialize(*args)
@@ -113,241 +113,256 @@ alias_method :access_mod_original_initialize, :initialize
     return possibleTiles
   end
 
-def cycle_hm_toggle
-  # --- Safeguard for old save files ---
-  if @hm_toggle_modes.nil?
-    @hm_toggle_modes = [:off, :surf_only, :surf_and_waterfall]
-    @hm_toggle_index = 0
+  def cycle_hm_toggle
+    # --- Safeguard for old save files ---
+    if @hm_toggle_modes.nil?
+      @hm_toggle_modes = [:off, :surf_only, :surf_and_waterfall]
+      @hm_toggle_index = 0
+    end
+
+    @hm_toggle_index = (@hm_toggle_index + 1) % @hm_toggle_modes.length
+    
+   
+    current_mode = @hm_toggle_modes[@hm_toggle_index]
+    announcement = ""
+    case current_mode
+    when :off
+      announcement = "HM pathfinding off"
+    when :surf_only
+      announcement = "HM pathfinding set to Surf only"
+    when :surf_and_waterfall
+      announcement = "HM pathfinding set to Surf and Waterfall"
+    end
+    tts(announcement)
   end
 
-  @hm_toggle_index = (@hm_toggle_index + 1) % @hm_toggle_modes.length
-  
- 
-  current_mode = @hm_toggle_modes[@hm_toggle_index]
-  announcement = ""
-  case current_mode
-  when :off
-    announcement = "HM pathfinding off"
-  when :surf_only
-    announcement = "HM pathfinding set to Surf only"
-  when :surf_and_waterfall
-    announcement = "HM pathfinding set to Surf and Waterfall"
+  def cycle_event_filter(direction = 1)
+    # --- Safeguard to initialize variables if they don't exist ---
+    if @event_filter_modes.nil? || @event_filter_modes.length != 8
+      # This will run once when loading an old save file
+      @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
+      @event_filter_index = 0
+    end
+    
+    # Move to the next/previous filter index
+    @event_filter_index += direction
+    
+    # Wrap around if necessary
+    if @event_filter_index >= @event_filter_modes.length
+      @event_filter_index = 0
+    elsif @event_filter_index < 0
+      @event_filter_index = @event_filter_modes.length - 1
+    end
+    
+    # Announce the new filter mode
+    current_filter = @event_filter_modes[@event_filter_index]
+    tts("Filter set to #{current_filter.to_s}")
+    
+    # Automatically refresh the event list with the new filter
+    populate_event_list
   end
-  tts(announcement)
-end
 
-def cycle_event_filter(direction = 1)
-  # --- Safeguard to initialize variables if they don't exist ---
-  if @event_filter_modes.nil? || @event_filter_modes.length != 8
-    # This will run once when loading an old save file
-    @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
-    @event_filter_index = 0
-  end
-  
-  # Move to the next/previous filter index
-  @event_filter_index += direction
-  
-  # Wrap around if necessary
-  if @event_filter_index >= @event_filter_modes.length
-    @event_filter_index = 0
-  elsif @event_filter_index < 0
-    @event_filter_index = @event_filter_modes.length - 1
-  end
-  
-  # Announce the new filter mode
-  current_filter = @event_filter_modes[@event_filter_index]
-  tts("Filter set to #{current_filter.to_s}")
-  
-  # Automatically refresh the event list with the new filter
-  populate_event_list
-end
+  def rename_selected_event
+    # Ensure an event is selected
+    return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
+    event = @mapevents[@selected_event_index]
 
-def rename_selected_event
-  # Ensure an event is selected
-  return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
-  event = @mapevents[@selected_event_index]
-
-  # Prompt user for the new name
-  Input.text_input = true
-  new_name = Kernel.pbMessageFreeText(_INTL("Enter new name for the selected event."), "", false, 24)
-  Input.text_input = false
-  
-  # Check if the user entered a valid, non-blank name
-  if new_name && !new_name.strip.empty?
-    # Prompt user for an optional description
+    # Prompt user for the new name
     Input.text_input = true
-    new_desc = Kernel.pbMessageFreeText(_INTL("Enter an optional description."), "", false, 100)
+    new_name = Kernel.pbMessageFreeText(_INTL("Enter new name for the selected event."), "", false, 24)
     Input.text_input = false
-
-    # Gather all necessary data
-    map_id = $game_map.map_id
-    map_name = $game_map.name
-    x = event.x
-    y = event.y
-
-    # Create the unique key and the value hash
-    key = "#{map_id};#{x};#{y}"
-    value = {
-      map_name: map_name,
-      event_name: new_name.strip,
-      description: (new_desc || "").strip
-    }
-
-    # Update the in-memory hash
-    $custom_event_names[key] = value
     
-    # Save the entire hash back to the file
-    save_custom_names
-    
-    # Provide feedback to the player
-    tts("Event renamed to #{new_name}")
-  else
-    # If the name is blank or the user cancelled, provide feedback
-    tts("Event renaming cancelled.")
-  end
-end
+    # Check if the user entered a valid, non-blank name
+    if new_name && !new_name.strip.empty?
+      # Prompt user for an optional description
+      Input.text_input = true
+      new_desc = Kernel.pbMessageFreeText(_INTL("Enter an optional description."), "", false, 100)
+      Input.text_input = false
 
-def is_path_passable?(x, y, d)
-  # --- Safeguard for old save files ---
-  if @hm_toggle_modes.nil?
-    @hm_toggle_modes = [:off, :surf_only, :surf_and_waterfall]
-    @hm_toggle_index = 0
-  end
+      # Gather all necessary data
+      map_id = $game_map.map_id
+      map_name = $game_map.name
+      x = event.x
+      y = event.y
 
-  # Handle holes
-  for event in $game_map.events.values
-    if event.x == x && event.y == y && is_teleport_event?(event)
-      return false
+      # Create the unique key and the value hash
+      key = "#{map_id};#{x};#{y}"
+      value = {
+        map_name: map_name,
+        event_name: new_name.strip,
+        description: (new_desc || "").strip
+      }
+
+      # Update the in-memory hash
+      $custom_event_names[key] = value
+      
+      # Save the entire hash back to the file
+      save_custom_names
+      
+      # Provide feedback to the player
+      tts("Event renamed to #{new_name}")
+    else
+      # If the name is blank or the user cancelled, provide feedback
+      tts("Event renaming cancelled.")
     end
   end
 
-  # First, check if the tile is normally passable
-  return true if passable?(x, y, d)
-  
-  # If not, check if it's an HM obstacle the player can pass with the toggle
-  current_mode = @hm_toggle_modes[@hm_toggle_index]
-  return false if current_mode == :off
-
-
-  # Get the coordinates of the tile we are trying to move to
-  new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
-  new_y = y + (d == 2 ? 1 : d == 8 ? -1 : 0)
-  return false unless self.map.valid?(new_x, new_y)
-  
-  # Get the terrain tag of the destination tile
-  terrain_tag = self.map.terrain_tag(new_x, new_y)
-
-  # Check for Surf
-  if pbIsPassableWaterTag?(terrain_tag) || pbIsPassableLavaTag?(terrain_tag)
-    return true if current_mode == :surf_only || current_mode == :surf_and_waterfall
-  end
-  
-  # Check for Waterfall
-  if terrain_tag == PBTerrain::Waterfall || terrain_tag == PBTerrain::WaterfallCrest
-    return true if current_mode == :surf_and_waterfall
-  end 
-  return false
-end
-
-def is_sign_event?(event)
-  return false if !event || !event.list || !event.character_name.empty?
-  for command in event.list
-    return true if command.code == 101 # Show Text
-  end
-  return false
-end
-
-def is_merchant_event?(event)
-  return false if !event || !event.list
-  for command in event.list
-    if command.code == 355 && command.parameters[0].is_a?(String)
-      return true if command.parameters[0].include?("pbPokemonMart")
+  def is_path_passable?(x, y, d)
+    # --- Safeguard for old save files ---
+    if @hm_toggle_modes.nil?
+      @hm_toggle_modes = [:off, :surf_only, :surf_and_waterfall]
+      @hm_toggle_index = 0
     end
+
+    # Handle holes
+    for event in $game_map.events.values
+      if event.x == x && event.y == y && is_teleport_event?(event)
+        return false
+      end
+    end
+
+    # First, check if the tile is normally passable
+    return true if passable?(x, y, d)
+    
+    # If not, check if it's an HM obstacle the player can pass with the toggle
+    current_mode = @hm_toggle_modes[@hm_toggle_index]
+    return false if current_mode == :off
+
+
+    # Get the coordinates of the tile we are trying to move to
+    new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
+    new_y = y + (d == 2 ? 1 : d == 8 ? -1 : 0)
+    return false unless self.map.valid?(new_x, new_y)
+    
+    # Get the terrain tag of the destination tile
+    terrain_tag = self.map.terrain_tag(new_x, new_y)
+
+    # Check for Surf
+    if pbIsPassableWaterTag?(terrain_tag) || pbIsPassableLavaTag?(terrain_tag)
+      return true if current_mode == :surf_only || current_mode == :surf_and_waterfall
+    end
+    
+    # Check for Waterfall
+    if terrain_tag == PBTerrain::Waterfall || terrain_tag == PBTerrain::WaterfallCrest
+      return true if current_mode == :surf_and_waterfall
+    end 
+    return false
   end
-  return false
-end
 
-def is_item_event?(event)
-  return false if !event
-  return event.character_name.start_with?("Object ball")
-end
-
-def is_z_cell_event?(event)
-  return false if !event
-  return event.character_name.start_with?("Object Cell")
-end
-
-def is_hidden_item_event?(event)
-  hiName = event.name.gsub(/\s/, '')
-  return hiName == "HiddenItem" || (hiName == 'HiddenCoins' && $PokemonBag.pbQuantity(:COINCASE)>0)
-end
-
-def is_npc_event?(event)
-  return false if !event
-  # An NPC is any event with a character sprite that isn't a connection or an item.
-  return !event.character_name.empty? && 
-         !is_teleport_event?(event) && 
-         !is_item_event?(event)
-end
-
-def is_teleport_event?(event)
-  return false if !event || !event.list
-  for command in event.list
-    # 201 is the event code for "Transfer Player"
-    return true if command.code == 201
+  def is_path_ledge_passable?(x, y, d)
+    # Get the coordinates of the tile we are trying to move to
+    new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
+    new_y = y + (d == 2 ? 1 : d == 8 ? -1 : 0)
+    return false unless self.map.valid?(new_x, new_y)
+    
+    # Get the terrain tag of the destination tile
+    terrain_tag = self.map.terrain_tag(new_x, new_y)
+    
+    if terrain_tag == PBTerrain::Ledge
+      return passable?(new_x, new_y, d)
+    end
+    return false
   end
-  return false
-end
 
-def get_teleport_destination_name(event)
-  return nil if !event || !event.list
-  for command in event.list
-    if command.code == 201 # Event command for "Transfer Player"
-      map_id = command.parameters[1]
-      # Use the Map Factory to get the destination map object
-      begin
-        mapname=pbGetMapNameFromId(map_id)
-        mapname.gsub!(/\\PN/,$Trainer.name)
-        return mapname
-      rescue # Broken Teleport
-        return nil
+  def is_sign_event?(event)
+    return false if !event || !event.list || !event.character_name.empty?
+    for command in event.list
+      return true if command.code == 101 # Show Text
+    end
+    return false
+  end
+
+  def is_merchant_event?(event)
+    return false if !event || !event.list
+    for command in event.list
+      if command.code == 355 && command.parameters[0].is_a?(String)
+        return true if command.parameters[0].include?("pbPokemonMart")
+      end
+    end
+    return false
+  end
+
+  def is_item_event?(event)
+    return false if !event
+    return event.character_name.start_with?("Object ball")
+  end
+
+  def is_z_cell_event?(event)
+    return false if !event
+    return event.character_name.start_with?("Object Cell")
+  end
+
+  def is_hidden_item_event?(event)
+    hiName = event.name.gsub(/\s/, '')
+    return hiName == "HiddenItem" || (hiName == 'HiddenCoins' && $PokemonBag.pbQuantity(:COINCASE)>0)
+  end
+
+  def is_npc_event?(event)
+    return false if !event
+    # An NPC is any event with a character sprite that isn't a connection or an item.
+    return !event.character_name.empty? && 
+           !is_teleport_event?(event) && 
+           !is_item_event?(event)
+  end
+
+  def is_teleport_event?(event)
+    return false if !event || !event.list
+    for command in event.list
+      # 201 is the event code for "Transfer Player"
+      return true if command.code == 201
+    end
+    return false
+  end
+
+  def get_teleport_destination_name(event)
+    return nil if !event || !event.list
+    for command in event.list
+      if command.code == 201 # Event command for "Transfer Player"
+        map_id = command.parameters[1]
+        # Use the Map Factory to get the destination map object
+        begin
+          mapname=pbGetMapNameFromId(map_id)
+          mapname.gsub!(/\\PN/,$Trainer.name)
+          return mapname
+        rescue # Broken Teleport
+          return nil
+        end
+      end
+    end
+    return nil # Return nil if it's not a teleport event
+  end
+
+  def reduceEventsInLanes(eventsArray)
+    # This method and its helpers are from the original Malta10 mod.
+    eventsInLane = []
+    for event in eventsArray
+      neighborNode = getNeighbor(event, eventsArray)
+      if neighborNode != nil
+        deleteNodesInOneLane(event, neighborNode, eventsArray)
       end
     end
   end
-  return nil # Return nil if it's not a teleport event
-end
 
-def reduceEventsInLanes(eventsArray)
-  # This method and its helpers are from the original Malta10 mod.
-  eventsInLane = []
-  for event in eventsArray
-    neighbourNode = getNeighbour(event, eventsArray)
-    if neighbourNode != nil
-      deleteNodesInOneLane(event, neighbourNode, eventsArray)
+  def getNeighbor(event, eventsArray)
+    for currentEvent in eventsArray
+      if (event.x - currentEvent.x).abs == 1 && event.y == currentEvent.y || 
+         (event.y - currentEvent.y).abs == 1 && event.x == currentEvent.x
+        return currentEvent
+      end
     end
+    return nil
   end
-end
 
-def getNeighbour(event, eventsArray)
-  for currentEvent in eventsArray
-    if (event.x - currentEvent.x).abs == 1 && event.y == currentEvent.y || 
-       (event.y - currentEvent.y).abs == 1 && event.x == currentEvent.x
-      return currentEvent
+  def getEvent(x, y, eventsArray)
+    for ea in eventsArray
+      if ea.x == x && ea.y == y
+        return ea
+      end
     end
+    return nil
   end
-  return nil
-end
 
-def getEvent(x, y, eventsArray)
-  for ea in eventsArray
-    if ea.x == x && ea.y == y
-      return ea
-    end
-  end
-  return nil
-end
-
-  def deleteNodesInOneLane(event, neighbourNode, eventsArray)
+  def deleteNodesInOneLane(event, neighborNode, eventsArray)
     nodesInLane = []
     eventDestination = nil
     for eventCommand in event.list
@@ -356,7 +371,7 @@ end
         eventDestination = $game_variables[eventDestination] if eventCommand.parameters[0] == 1 # Variable
       end
     end
-    if event.x == neighbourNode.x #y-axis
+    if event.x == neighborNode.x #y-axis
       i = 1
       while true
         foundEvent = getEvent(event.x, event.y + i, eventsArray)
@@ -434,141 +449,165 @@ end
     end
   end
 
-def announce_selected_coordinates
-  return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
-  event = @mapevents[@selected_event_index]
-  
-  # Start with the base coordinate announcement
-  announcement = "Coordinates: X #{event.x}, Y #{event.y}"
-  
-  # Create a unique key for the current event
-  key = "#{$game_map.map_id};#{event.x};#{event.y}"
-  custom_name_data = $custom_event_names[key]
-  
-  # Check if custom data exists and has a non-empty description
-  if custom_name_data && custom_name_data[:description] && !custom_name_data[:description].strip.empty?
-    announcement += ". #{custom_name_data[:description]}"
-  end
-  
-  tts(announcement)
-end
-
-def announce_selected_event
-  return if @selected_event_index == -1 || @mapevents[@selected_event_index].nil?
-  event = @mapevents[@selected_event_index]
-  dist = distance(@x, @y, event.x, event.y).round
-
-  # Create a unique key for the current event
-  key = "#{$game_map.map_id};#{event.x};#{event.y}"
-  custom_name_data = $custom_event_names[key]
-  announcement_text = ""
-  
-  # Check if custom name data exists and has a non-empty name
-  if custom_name_data && custom_name_data[:event_name] && !custom_name_data[:event_name].strip.empty?
-    announcement_text = custom_name_data[:event_name]
-    else
-  # First, check if the event is a connection.
-  if is_teleport_event?(event)
-    # If it is, always start the announcement with "Connection to..."
-    destination = get_teleport_destination_name(event)
+  def announce_selected_coordinates
+    return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
+    event = @mapevents[@selected_event_index]
     
-    # Use the destination map's name if it's available.
-    if destination && !destination.strip.empty?
-      announcement_text = "Connection to #{destination}"
-    # Otherwise, fall back to the event's own name if it has one.
-    elsif event.name && !event.name.strip.empty?
-      announcement_text = "Connection to #{event.name}"
-    # If neither is available, use a generic announcement.
-    else
-      announcement_text = "Connection"
+    # Start with the base coordinate announcement
+    announcement = "Coordinates: X #{event.x}, Y #{event.y}"
+    
+    # Create a unique key for the current event
+    key = "#{$game_map.map_id};#{event.x};#{event.y}"
+    custom_name_data = $custom_event_names[key]
+    
+    # Check if custom data exists and has a non-empty description
+    if custom_name_data && custom_name_data[:description] && !custom_name_data[:description].strip.empty?
+      announcement += ". #{custom_name_data[:description]}"
     end
-  # If it's NOT a connection, check if it has a name.
-  elsif event.name && !event.name.strip.empty?
-    announcement_text = event.name
-  # If all else fails, it's an unnamed interactable object.
-  else
-    announcement_text = "Interactable object"
-  end  
-end
-
-  dist = distance(@x, @y, event.x, event.y).round
-  facing_direction = ""
-  case @direction
-  when 2; facing_direction = "facing down"
-  when 4; facing_direction = "facing left"
-  when 6; facing_direction = "facing right"
-  when 8; facing_direction = "facing up"
-  end
-  
-  tts("#{announcement_text}, #{dist} steps away, #{facing_direction}.")
-end
-
-def pathfind_to_selected_event
-  return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
-  
-  target_event = @mapevents[@selected_event_index]
-  
-  # First, try to find a direct path to the event's coordinates
-  route = aStern(Node.new(@x, @y), Node.new(target_event.x, target_event.y))
-  
-  # If the direct path fails (e.g., NPC behind a counter)
-  if route.empty?
-    # Get a list of possible adjacent tiles to interact from
-    possible_targets = getEventTiles(target_event)
     
-    # Loop through the alternatives and try to find a path to one of them
-    for target in possible_targets
-      alternative_route = aStern(Node.new(@x, @y), target.node)
-      if !alternative_route.empty?
-        route = alternative_route # Use the first successful alternative path
-        break
+    tts(announcement)
+  end
+
+  def announce_selected_event
+    return if @selected_event_index == -1 || @mapevents[@selected_event_index].nil?
+    event = @mapevents[@selected_event_index]
+    dist = distance(@x, @y, event.x, event.y).round
+
+    # Create a unique key for the current event
+    key = "#{$game_map.map_id};#{event.x};#{event.y}"
+    custom_name_data = $custom_event_names[key]
+    announcement_text = ""
+    
+    # Check if custom name data exists and has a non-empty name
+    if custom_name_data && custom_name_data[:event_name] && !custom_name_data[:event_name].strip.empty?
+      announcement_text = custom_name_data[:event_name]
+    else
+    # First, check if the event is a connection.
+      if is_teleport_event?(event)
+        # If it is, always start the announcement with "Connection to..."
+        destination = get_teleport_destination_name(event)
+        
+        # Use the destination map's name if it's available.
+        if destination && !destination.strip.empty?
+          announcement_text = "Connection to #{destination}"
+        # Otherwise, fall back to the event's own name if it has one.
+        elsif event.name && !event.name.strip.empty?
+          announcement_text = "Connection to #{event.name}"
+        # If neither is available, use a generic announcement.
+        else
+          announcement_text = "Connection"
+        end
+      # If it's NOT a connection, check if it has a name.
+      elsif event.name && !event.name.strip.empty?
+        announcement_text = event.name
+      # If all else fails, it's an unnamed interactable object.
+      else
+        announcement_text = "Interactable object"
+      end  
+    end
+
+    dist = distance(@x, @y, event.x, event.y).round
+    facing_direction = ""
+    case @direction
+    when 2; facing_direction = "facing down"
+    when 4; facing_direction = "facing left"
+    when 6; facing_direction = "facing right"
+    when 8; facing_direction = "facing up"
+    end
+    
+    tts("#{announcement_text}, #{dist} steps away, #{facing_direction}.")
+  end
+
+  def pathfind_to_selected_event
+    return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
+    
+    target_event = @mapevents[@selected_event_index]
+    
+    # First, try to find a direct path to the event's coordinates
+    route = aStern(Node.new(@x, @y), Node.new(target_event.x, target_event.y))
+    
+    # If the direct path fails (e.g., NPC behind a counter)
+    if route.empty?
+      # Get a list of possible adjacent tiles to interact from
+      possible_targets = getEventTiles(target_event)
+      
+      # Loop through the alternatives and try to find a path to one of them
+      for target in possible_targets
+        alternative_route = aStern(Node.new(@x, @y), target.node)
+        if !alternative_route.empty?
+          route = alternative_route # Use the first successful alternative path
+          break
+        end
       end
     end
+    
+    # Announce the final route, whether it was direct or an alternative
+    printInstruction(convertRouteToInstructions(route))
   end
-  
-  # Announce the final route, whether it was direct or an alternative
-  printInstruction(convertRouteToInstructions(route))
-end
 
-def populate_event_list
-  # --- Safeguard to initialize variables if they don't exist ---
-  if @event_filter_modes.nil? || @event_filter_modes.length != 8
+  def populate_event_list
+    # --- Safeguard to initialize variables if they don't exist ---
+    if @event_filter_modes.nil? || @event_filter_modes.length != 8
+      @mapevents = []
+      @selected_event_index = -1
+      @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
+      @event_filter_index = 0
+    end
+
     @mapevents = []
-    @selected_event_index = -1
-    @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
-    @event_filter_index = 0
-  end
+    current_filter = @event_filter_modes[@event_filter_index]
 
-  @mapevents = []
-  current_filter = @event_filter_modes[@event_filter_index]
+    connections = []
+    other_events = []
 
-  connections = []
-  other_events = []
+    allevents = []
 
-  allevents = []
-
-  for event in $game_map.events.values
-    allevents.push(event)
-  end
-
-  if $game_map.has_connections
-    positions = []
-    for x in 0...$game_map.width
-      positions.push([x,                    0, x,               -1, 4])
-      positions.push([x, $game_map.height - 1, x, $game_map.height, 6])
+    for event in $game_map.events.values
+      allevents.push(event)
     end
 
-    for y in 0...$game_map.height
-      positions.push([0,                   y,              -1, y, 8])
-      positions.push([$game_map.width - 1, y, $game_map.width, y, 2])
+    if $game_map.has_connections
+      positions = []
+      for x in 0...$game_map.width
+        positions.push([x,                    0, x,               -1, 4])
+        positions.push([x, $game_map.height - 1, x, $game_map.height, 6])
+      end
+
+      for y in 0...$game_map.height
+        positions.push([0,                   y,              -1, y, 8])
+        positions.push([$game_map.width - 1, y, $game_map.width, y, 2])
+      end
+
+      for x, y, checkx, checky, direction in positions
+
+        next unless $game_map.passable?(x, y, direction)
+
+        # Create a unique key to check for a custom name
+        key = "#{$game_map.map_id};#{x};#{y}"
+        custom_name_data = $custom_event_names[key]
+
+        # If a custom name exists, check if it's "ignore" (case-insensitive)
+        if custom_name_data && custom_name_data[:event_name] &&
+           custom_name_data[:event_name].strip.downcase == "ignore"
+          next # Skip this event and move to the next one
+        end
+
+        newmap = $MapFactory.getNewMap(checkx, checky)
+        if newmap
+          fakeev = RPG::Event.new(x, y)
+          fakeev.newPage { |page| page.playerTouch([:TransferPlayer, :Constant, *newmap, :Up, true], :Done) }
+          gameev = Game_Event.new($game_map.map_id, fakeev, map)
+          allevents.push(gameev)
+        end
+      end
     end
 
-    for x, y, checkx, checky, direction in positions
-
-      next unless $game_map.passable?(x, y, direction)
+    for event in allevents
+      next if !event.list || event.list.size <= 1
+      next if event.trigger == 3 || event.trigger == 4 # Ignore Autorun and Parallel
 
       # Create a unique key to check for a custom name
-      key = "#{$game_map.map_id};#{x};#{y}"
+      key = "#{$game_map.map_id};#{event.x};#{event.y}"
       custom_name_data = $custom_event_names[key]
 
       # If a custom name exists, check if it's "ignore" (case-insensitive)
@@ -576,67 +615,43 @@ def populate_event_list
          custom_name_data[:event_name].strip.downcase == "ignore"
         next # Skip this event and move to the next one
       end
-
-      newmap = $MapFactory.getNewMap(checkx, checky)
-      if newmap
-        fakeev = RPG::Event.new(x, y)
-        fakeev.newPage { |page| page.playerTouch([:TransferPlayer, :Constant, *newmap, :Up, true], :Done) }
-        gameev = Game_Event.new($game_map.map_id, fakeev, map)
-        allevents.push(gameev)
+      
+      # Apply the selected filter
+      case current_filter
+      when :all
+        if is_teleport_event?(event)
+          connections.push(event)
+        else
+          other_events.push(event)
+        end
+      when :connections
+        connections.push(event) if is_teleport_event?(event)
+      when :npcs
+        other_events.push(event) if is_npc_event?(event)
+      when :items
+        other_events.push(event) if is_item_event?(event)
+      when :z_cells
+        other_events.push(event) if is_z_cell_event?(event)
+      when :merchants
+        other_events.push(event) if is_merchant_event?(event)
+      when :signs
+        other_events.push(event) if is_sign_event?(event)
+      when :hidden_items  # --- ADD THIS NEW CASE ---
+        other_events.push(event) if is_hidden_item_event?(event)
       end
     end
-  end
 
-  for event in allevents
-    next if !event.list || event.list.size <= 1
-    next if event.trigger == 3 || event.trigger == 4 # Ignore Autorun and Parallel
+    # Run de-duplication on connections, regardless of filter
+    reduceEventsInLanes(connections)
 
-    # Create a unique key to check for a custom name
-    key = "#{$game_map.map_id};#{event.x};#{event.y}"
-    custom_name_data = $custom_event_names[key]
-
-    # If a custom name exists, check if it's "ignore" (case-insensitive)
-    if custom_name_data && custom_name_data[:event_name] &&
-       custom_name_data[:event_name].strip.downcase == "ignore"
-      next # Skip this event and move to the next one
+    # Combine the lists and sort
+    @mapevents = other_events + connections
+    # Sort the final list by distance only if the toggle is on
+    if @sort_by_distance
+      @mapevents.sort! { |a, b| distance(@x, @y, a.x, a.y) <=> distance(@x, @y, b.x, b.y) }
     end
-    
-    # Apply the selected filter
-    case current_filter
-    when :all
-      if is_teleport_event?(event)
-        connections.push(event)
-      else
-        other_events.push(event)
-      end
-    when :connections
-      connections.push(event) if is_teleport_event?(event)
-    when :npcs
-      other_events.push(event) if is_npc_event?(event)
-    when :items
-      other_events.push(event) if is_item_event?(event)
-    when :z_cells
-      other_events.push(event) if is_z_cell_event?(event)
-    when :merchants
-      other_events.push(event) if is_merchant_event?(event)
-    when :signs
-      other_events.push(event) if is_sign_event?(event)
-    when :hidden_items  # --- ADD THIS NEW CASE ---
-      other_events.push(event) if is_hidden_item_event?(event)
-    end
+    @selected_event_index = @mapevents.empty? ? -1 : 0
   end
-
-  # Run de-duplication on connections, regardless of filter
-  reduceEventsInLanes(connections)
-
-  # Combine the lists and sort
-  @mapevents = other_events + connections
-  # Sort the final list by distance only if the toggle is on
-  if @sort_by_distance
-    @mapevents.sort! { |a, b| distance(@x, @y, a.x, a.y) <=> distance(@x, @y, b.x, b.y) }
-  end
-  @selected_event_index = @mapevents.empty? ? -1 : 0
-end
 
   def convertRouteToInstructions(route)
     if route.length == 0
@@ -816,40 +831,41 @@ end
         return retracePath(start, currentNode, isTargetPassable, targetDirection, originalTarget)
       end
 
-      neighbours = getNeighbours(currentNode, target, isTargetPassable, targetDirection, map)
-      for neighbour in neighbours
-        if nodeInSet(neighbour, closedSet)
+      neighbors = getNeighbors(currentNode, target, isTargetPassable, targetDirection, map)
+      for neighbor in neighbors
+        if nodeInSet(neighbor, closedSet)
           next
         end
-        neighbourIndex = getNodeIndexInSet(neighbour, openSet)
-        newMovementCostToNeighbour = 2
+        neighborIndex = getNodeIndexInSet(neighbor, openSet)
+        newMovementCostToNeighbor = 2
         if currentNode.parent != "none"
-          xDifNeighbour = neighbour.x - currentNode.x
-          yDifNeighbour = neighbour.y - currentNode.y
+          xDifNeighbor = neighbor.x - currentNode.x
+          yDifNeighbor = neighbor.y - currentNode.y
           xDifParent = currentNode.x - currentNode.parent.x
           yDifParent = currentNode.y - currentNode.parent.y
-          if xDifNeighbour == xDifParent && yDifNeighbour == yDifParent
-            newMovementCostToNeighbour = currentNode.gCost + 1
+          if xDifNeighbor == xDifParent && yDifNeighbor == yDifParent
+            newMovementCostToNeighbor = currentNode.gCost + 1
           else
-            newMovementCostToNeighbour = currentNode.gCost + 1.5
+            newMovementCostToNeighbor = currentNode.gCost + 1.5
           end
         else
-          newMovementCostToNeighbour = 1.5
+          newMovementCostToNeighbor = 1.5
         end
 
-        if neighbourIndex > -1 && newMovementCostToNeighbour < openSet[neighbourIndex].gCost
-          openSet[neighbourIndex].gCost = newMovementCostToNeighbour
-          openSet[neighbourIndex].hCost = distanceNode(openSet[neighbourIndex], target)
-          openSet[neighbourIndex].parent = currentNode
+        if neighborIndex > -1 && newMovementCostToNeighbor < openSet[neighborIndex].gCost
+          openSet[neighborIndex].gCost = newMovementCostToNeighbor
+          openSet[neighborIndex].hCost = distanceNode(openSet[neighborIndex], target)
+          openSet[neighborIndex].parent = currentNode
         end
-        if (neighbourIndex == -1)
-          neighbour.gCost = newMovementCostToNeighbour
-          neighbour.hCost = distanceNode(neighbour, target)
-          neighbour.parent = currentNode
-          openSet.push(neighbour)
+        if (neighborIndex == -1)
+          neighbor.gCost = newMovementCostToNeighbor
+          neighbor.hCost = distanceNode(neighbor, target)
+          neighbor.parent = currentNode
+          openSet.push(neighbor)
         end
       end
     end
+
     return []
   end
 
@@ -882,10 +898,10 @@ end
     return path
   end
 
-  def getNodeIndexInSet(neighbour, set)
+  def getNodeIndexInSet(neighbor, set)
     i = 0
     while i < set.length do
-      if set[i].equals(neighbour)
+      if set[i].equals(neighbor)
         return i
       end
       i = i + 1
@@ -893,45 +909,41 @@ end
     return -1
   end
 
-  def nodeInSet(neighbour, set)
+  def nodeInSet(neighbor, set)
     for node in set
-      if node.equals(neighbour)
+      if node.equals(neighbor)
         return true
       end
     end
     return false
   end
 
-def getNeighbours(node, target, isTargetPassable, targetDirection, map)
-    neighbours = []
-    if isTargetPassable || targetDirection != -1
-      if is_path_passable?(node.x, node.y, 2)
-        neighbours.push(Node.new(node.x, node.y + 1))
-      end
-      if is_path_passable?(node.x, node.y, 4)
-        neighbours.push(Node.new(node.x - 1, node.y))
-      end
-      if is_path_passable?(node.x, node.y, 6)
-        neighbours.push(Node.new(node.x + 1, node.y))
-      end
-      if is_path_passable?(node.x, node.y, 8)
-        neighbours.push(Node.new(node.x, node.y - 1))
-      end
-    else
-      if is_path_passable?(node.x, node.y, 2) || target.equals(Node.new(node.x, node.y + 1))
-        neighbours.push(Node.new(node.x, node.y + 1))
-      end
-      if is_path_passable?(node.x, node.y, 4) || target.equals(Node.new(node.x - 1, node.y))
-        neighbours.push(Node.new(node.x - 1, node.y))
-      end
-      if is_path_passable?(node.x, node.y, 6) || target.equals(Node.new(node.x + 1, node.y))
-        neighbours.push(Node.new(node.x + 1, node.y))
-      end
-      if is_path_passable?(node.x, node.y, 8) || target.equals(Node.new(node.x, node.y - 1))
-        neighbours.push(Node.new(node.x, node.y - 1))
-      end
+  def inspect
+    return "player"
+  end
+
+  def push_neighbor(neighbors, node, dir, target = nil)
+    offsetx, offsety =  0,  1 if dir == 2
+    offsetx, offsety =  1,  0 if dir == 4
+    offsetx, offsety = -1,  0 if dir == 6
+    offsetx, offsety =  0, -1 if dir == 8
+
+    if is_path_passable?(node.x, node.y, dir) || (target && target.equals(Node.new(node.x + offsetx, node.y + offsety)))
+      neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
     end
-    return neighbours
+    if is_path_ledge_passable?(node.x, node.y, dir)
+      neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
+    end
+  end
+
+  def getNeighbors(node, target, isTargetPassable, targetDirection, map)
+    neighbors = []
+    chooseTarget = (isTargetPassable || targetDirection != -1) ? nil : target
+    push_neighbor(neighbors, node, 2, chooseTarget)
+    push_neighbor(neighbors, node, 4, chooseTarget)
+    push_neighbor(neighbors, node, 6, chooseTarget)
+    push_neighbor(neighbors, node, 8, chooseTarget)
+    return neighbors
   end
   
   def getTargetDirection(target, map)
@@ -953,6 +965,10 @@ def getNeighbours(node, target, isTargetPassable, targetDirection, map)
 
   def isTargetPassable(target, map = $game_map)
     return passableEx?(target.x, target.y - 1, 2, false, map) || passableEx?(target.x + 1, target.y, 4, false, map) || passableEx?(target.x - 1, target.y, 6, false, map) || passableEx?(target.x, target.y + 1, 8, false, map)
+  end
+
+  def isLedge(target, map = $game_map)
+    return map.terrain_tag(target.x, target.y) == PBTerrain::Ledge && map.passable?(target.x, target.y, 0)
   end
 
   def access_mod_update
