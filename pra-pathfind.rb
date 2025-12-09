@@ -254,6 +254,14 @@ class Game_Player < Game_Character
     new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
     new_y = y + (d == 2 ? 1 : d == 8 ? -1 : 0)
     return false unless self.map.valid?(new_x, new_y)
+
+    # Handle jumps
+    for event in $game_map.events.values
+      if event.x == new_x && event.y == new_y && is_jump_event?(event, d)
+        p new_x, new_y, d
+        return true
+      end
+    end
     
     # Get the terrain tag of the destination tile
     terrain_tag = self.map.terrain_tag(new_x, new_y)
@@ -265,7 +273,7 @@ class Game_Player < Game_Character
   end
 
   def is_sign_event?(event)
-    return false if !event || !event.list || !event.character_name.empty?
+    return false if !event || !event.list || (!event.character_name.empty? && !event.tile_id < 384)
     for command in event.list
       return true if command.code == 101 # Show Text
     end
@@ -300,9 +308,41 @@ class Game_Player < Game_Character
   def is_npc_event?(event)
     return false if !event
     # An NPC is any event with a character sprite that isn't a connection or an item.
-    return !event.character_name.empty? && 
+    return !event.character_name.empty? && !event.tile_id < 384 && 
            !is_teleport_event?(event) && 
            !is_item_event?(event)
+  end
+
+  def is_jump_event?(event, direction)
+    return false if !event || !event.list
+    return false if event.trigger != 1
+    offsetx, offsety =  0,  1 if direction == 2
+    offsetx, offsety =  1,  0 if direction == 4
+    offsetx, offsety = -1,  0 if direction == 6
+    offsetx, offsety =  0, -1 if direction == 8
+
+    in_leap = false
+    for command in event.list
+      if in_leap
+        # 209 is set move route
+        if command.code == 209 && command.parameters[0] == -1
+          for mvcmd in command.parameters[1].list
+            # 14 is jump
+            if mvcmd.code == 14 && mvcmd.parameters[0] == offsetx * 2 && mvcmd.parameters[1] == offsety * 2
+              return true
+            end
+          end
+        elsif command.code == 0
+          in_leap = false
+        end
+      else
+        # 111 is conditional branch, 6 is character, -1 is player
+        if command.code == 111 && command.parameters[0] == 6 && command.parameters[1] == -1 && command.parameters[2] == direction
+          in_leap = true
+        end
+      end
+    end
+    return false
   end
 
   def is_teleport_event?(event)
@@ -483,20 +523,20 @@ class Game_Player < Game_Character
       announcement_text = custom_name_data[:event_name]
     else
     # First, check if the event is a connection.
-      if is_teleport_event?(event)
-        # If it is, always start the announcement with "Connection to..."
-        destination = get_teleport_destination_name(event)
-        
-        # Use the destination map's name if it's available.
-        if destination && !destination.strip.empty?
-          announcement_text = "Connection to #{destination}"
-        # Otherwise, fall back to the event's own name if it has one.
-        elsif event.name && !event.name.strip.empty?
-          announcement_text = "Connection to #{event.name}"
-        # If neither is available, use a generic announcement.
-        else
-          announcement_text = "Connection"
-        end
+    if is_teleport_event?(event)
+      # If it is, always start the announcement with "Connection to..."
+      destination = get_teleport_destination_name(event)
+      
+      # Use the destination map's name if it's available.
+      if destination && !destination.strip.empty?
+        announcement_text = "Connection to #{destination}"
+      # Otherwise, fall back to the event's own name if it has one.
+      elsif event.name && !event.name.strip.empty?
+        announcement_text = "Connection to #{event.name}"
+      # If neither is available, use a generic announcement.
+      else
+        announcement_text = "Connection"
+      end
       # If it's NOT a connection, check if it has a name.
       elsif event.name && !event.name.strip.empty?
         announcement_text = event.name
@@ -932,7 +972,7 @@ class Game_Player < Game_Character
       neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
     end
     if is_path_ledge_passable?(node.x, node.y, dir)
-      neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
+      neighbors.push(Node.new(node.x + offsetx * 2, node.y + offsety * 2))
     end
   end
 
@@ -965,10 +1005,6 @@ class Game_Player < Game_Character
 
   def isTargetPassable(target, map = $game_map)
     return passableEx?(target.x, target.y - 1, 2, false, map) || passableEx?(target.x + 1, target.y, 4, false, map) || passableEx?(target.x - 1, target.y, 6, false, map) || passableEx?(target.x, target.y + 1, 8, false, map)
-  end
-
-  def isLedge(target, map = $game_map)
-    return map.terrain_tag(target.x, target.y) == PBTerrain::Ledge && map.passable?(target.x, target.y, 0)
   end
 
   def access_mod_update
