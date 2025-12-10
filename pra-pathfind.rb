@@ -957,10 +957,6 @@ class Game_Player < Game_Character
     return false
   end
 
-  def inspect
-    return "player"
-  end
-
   def push_neighbor(neighbors, node, dir, target = nil)
     offsetx, offsety =  0,  1 if dir == 2
     offsetx, offsety = -1,  0 if dir == 4
