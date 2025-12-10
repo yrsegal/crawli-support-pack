@@ -258,7 +258,6 @@ class Game_Player < Game_Character
     # Handle jumps
     for event in $game_map.events.values
       if event.x == new_x && event.y == new_y && is_jump_event?(event, d)
-        p new_x, new_y, d
         return true
       end
     end
@@ -317,8 +316,8 @@ class Game_Player < Game_Character
     return false if !event || !event.list
     return false if event.trigger != 1
     offsetx, offsety =  0,  1 if direction == 2
-    offsetx, offsety =  1,  0 if direction == 4
-    offsetx, offsety = -1,  0 if direction == 6
+    offsetx, offsety = -1,  0 if direction == 4
+    offsetx, offsety =  1,  0 if direction == 6
     offsetx, offsety =  0, -1 if direction == 8
 
     in_leap = false
@@ -964,14 +963,13 @@ class Game_Player < Game_Character
 
   def push_neighbor(neighbors, node, dir, target = nil)
     offsetx, offsety =  0,  1 if dir == 2
-    offsetx, offsety =  1,  0 if dir == 4
-    offsetx, offsety = -1,  0 if dir == 6
+    offsetx, offsety = -1,  0 if dir == 4
+    offsetx, offsety =  1,  0 if dir == 6
     offsetx, offsety =  0, -1 if dir == 8
 
     if is_path_passable?(node.x, node.y, dir) || (target && target.equals(Node.new(node.x + offsetx, node.y + offsety)))
       neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
-    end
-    if is_path_ledge_passable?(node.x, node.y, dir)
+    elsif is_path_ledge_passable?(node.x, node.y, dir)
       neighbors.push(Node.new(node.x + offsetx * 2, node.y + offsety * 2))
     end
   end
