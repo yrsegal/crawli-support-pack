@@ -272,7 +272,7 @@ class Game_Player < Game_Character
   end
 
   def is_sign_event?(event)
-    return false if !event || !event.list || (!event.character_name.empty? && !event.tile_id < 384)
+    return false if !event || !event.list || (!event.character_name.empty? && event.tile_id < 384)
     for command in event.list
       return true if command.code == 101 # Show Text
     end
@@ -307,7 +307,7 @@ class Game_Player < Game_Character
   def is_npc_event?(event)
     return false if !event
     # An NPC is any event with a character sprite that isn't a connection or an item.
-    return !event.character_name.empty? && !event.tile_id < 384 && 
+    return !event.character_name.empty? && event.tile_id < 384 && 
            !is_teleport_event?(event) && 
            !is_item_event?(event)
   end
