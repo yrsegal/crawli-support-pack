@@ -26,7 +26,7 @@ def playWeatherOrDiveBGS
       return
     end
     if $PokemonGlobal.diving
-      divemap = $cache.mapdata[$game_map.map_id].SurfaceMap
+      divemap = $cache.mapdata[$game_map.map_id].DiveMap
       if !divemap.nil? && $MapFactory.getTerrainTag(divemap, $game_player.x, $game_player.y) == PBTerrain::DeepWater
         pbAccessibilityBGSPlay("Ambient Light")
         return
