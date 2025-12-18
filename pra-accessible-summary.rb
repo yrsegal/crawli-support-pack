@@ -812,7 +812,7 @@ class PokemonStorageScreen
             pbDisplay(_INTL("You're holding a Pokémon!"))
             next
           end
-          break if pbConfirm(_INTL("Continue Box operations?"))
+          break unless pbConfirm(_INTL("Continue Box operations?"))
           next
         elsif !Input.press?(Input::CTRL) && selected[0] == -4 # Box name
           pbBoxCommands
