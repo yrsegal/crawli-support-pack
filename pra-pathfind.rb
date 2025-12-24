@@ -4,8 +4,9 @@ class Game_Player < Game_Character
     # First, call the original update method (which includes the running logic)
     access_mod_original_update
 
-    # If the player enters a new map, refresh the list
-    if @last_map_id != $game_map.map_id
+    # --- Auto-refresh on map change ---
+    # Only run if the toggle is ON and the map ID has changed
+    if @auto_refresh_map_list && @last_map_id != $game_map.map_id
       @last_map_id = $game_map.map_id
       populate_event_list
     end
@@ -33,8 +34,13 @@ class Game_Player < Game_Character
 
       # Refresh the event list (F5)
       if Input.triggerex?(0x74)
-        populate_event_list
-        tts('Map list refreshed')
+        if Input.pressex?(0x10) # Holding shift
+          @auto_refresh_map_list = !@auto_refresh_map_list
+          tts("Auto-refresh map list: #{@auto_refresh_map_list ? 'On' : 'Off'}")
+        else
+          populate_event_list
+          tts('Map list refreshed')
+        end
       end
 
       # Make sure we have events to cycle through
@@ -75,7 +81,12 @@ class Game_Player < Game_Character
 
         # Announce Notes (N)
         if Input.triggerex?(0x4E)
-          announce_selected_notes
+
+          if Input.pressex?(0x10) # Holding shift
+            add_note_to_selected_event
+          else
+            announce_selected_notes
+          end
         end
       end
     end
@@ -94,6 +105,8 @@ class Game_Player < Game_Character
     @hm_toggle_modes = [:off, :surf_only, :surf_and_waterfall]
     @hm_toggle_index = 0 # Default to :off
     @sort_by_distance = true # Default to sorting by distance
+    @auto_refresh_map_list = true # Default to Auto-Refresh ON
+    @last_map_id = -1             # Tracker for map changes
   end
   
   # --- Helper class and method for finding interactable tiles next to an event ---
@@ -213,6 +226,46 @@ class Game_Player < Game_Character
     else
       # If the name is blank or the user cancelled, provide feedback
       tts("Event renaming cancelled.")
+    end
+  end
+
+  def add_note_to_selected_event
+    return if @selected_event_index < 0 || @mapevents[@selected_event_index].nil?
+    event = @mapevents[@selected_event_index]
+
+    # Prompt user for the note only
+    new_note = Kernel.pbMessageFreeText(_INTL("Enter notes for this event (max 500 characters)."), "", false, 500)
+    
+    if new_note
+      # Gather necessary data
+      map_id = $game_map.map_id
+      map_name = $game_map.name
+      x = event.x
+      y = event.y
+
+      # Create the unique key
+      key = "#{map_id};#{x};#{y}"
+      
+      # Check if this event already has a custom name we need to preserve
+      current_custom_name = ""
+      if $custom_event_names[key] && $custom_event_names[key][:event_name]
+        current_custom_name = $custom_event_names[key][:event_name]
+      end
+
+      # Create value hash, preserving the name if it exists, updating the note
+      value = {
+        map_name: map_name,
+        event_name: current_custom_name,
+        notes: new_note
+      }
+
+      # Update and save
+      $custom_event_names[key] = value
+      save_custom_names
+      
+      tts("Note saved.")
+    else
+      tts("Note entry cancelled.")
     end
   end
 
@@ -608,12 +661,29 @@ class Game_Player < Game_Character
     printInstruction(convertRouteToInstructions(route))
   end
 
+  def create_fake_connection_event(map, x, y)
+    # Create a unique key to check for a custom name
+    key = "#{$game_map.map_id};#{x};#{y}"
+    custom_name_data = $custom_event_names[key]
+
+    # If a custom name exists, check if it's "ignore" (case-insensitive)
+    if custom_name_data && custom_name_data[:event_name] &&
+       custom_name_data[:event_name].strip.downcase == "ignore"
+      return nil # Skip this event and move to the next one
+    end
+
+    fakeev = RPG::Event.new(x, y)
+    fakeev.newPage { |page| page.playerTouch([:TransferPlayer, :Constant, map, x, y, :Up, true]) }
+    gameev = Game_Event.new($game_map.map_id, fakeev, map)
+    return gameev
+  end
+
   def populate_event_list
     # --- Safeguard to initialize variables if they don't exist ---
-    if @event_filter_modes.nil? || @event_filter_modes.length != 8
+    if @event_filter_modes.nil? || @event_filter_modes.length != 9
       @mapevents = []
       @selected_event_index = -1
-      @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items]
+      @event_filter_modes = [:all, :connections, :npcs, :items, :z_cells, :merchants, :signs, :hidden_items, :notes]
       @event_filter_index = 0
     end
 
@@ -645,22 +715,43 @@ class Game_Player < Game_Character
 
         next unless $game_map.passable?(x, y, direction)
 
-        # Create a unique key to check for a custom name
-        key = "#{$game_map.map_id};#{x};#{y}"
-        custom_name_data = $custom_event_names[key]
-
-        # If a custom name exists, check if it's "ignore" (case-insensitive)
-        if custom_name_data && custom_name_data[:event_name] &&
-           custom_name_data[:event_name].strip.downcase == "ignore"
-          next # Skip this event and move to the next one
-        end
-
         newmap = $MapFactory.getNewMap(checkx, checky)
         if newmap
-          fakeev = RPG::Event.new(x, y)
-          fakeev.newPage { |page| page.playerTouch([:TransferPlayer, :Constant, *newmap, :Up, true], :Done) }
-          gameev = Game_Event.new($game_map.map_id, fakeev, map)
-          allevents.push(gameev)
+          allevents.push(create_fake_connection_event(*newmap))
+        end
+      end
+    end
+
+    if $PokemonGlobal.diving
+      unless DIVINGSURFACEANYWHERE
+        divemap = nil
+        for i in 0...$cache.mapdata.length
+          if $cache.mapdata[i] && $cache.mapdata[i].DiveMap
+            if $cache.mapdata[i].DiveMap == $game_map.map_id
+              divemap = i
+              break
+            end
+          end
+        end
+
+        if divemap
+          for x in 0...$game_map.width
+            for y in 0...$game_map.height
+              if $MapFactory.getTerrainTag(divemap, x, y) == PBTerrain::DeepWater
+                allevents.push(create_fake_connection_event(divemap, x, y))
+              end
+            end
+          end
+        end
+      end
+    elsif $cache.mapdata[$game_map.map_id].DiveMap
+      divemap=$cache.mapdata[$game_map.map_id].DiveMap
+
+      for x in 0...$game_map.width
+        for y in 0...$game_map.height
+          if $game_map.terrain_tag(x, y) == PBTerrain::DeepWater
+            allevents.push(create_fake_connection_event(divemap, x, y))
+          end
         end
       end
     end
