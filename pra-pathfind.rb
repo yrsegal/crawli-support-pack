@@ -738,7 +738,7 @@ class Game_Player < Game_Character
           for x in 0...$game_map.width
             for y in 0...$game_map.height
               if $MapFactory.getTerrainTag(divemap, x, y) == PBTerrain::DeepWater
-                allevents.push(create_fake_connection_event(getMapNoAdd(divemap), x, y))
+                allevents.push(create_fake_connection_event($MapFactory.getMapNoAdd(divemap), x, y))
               end
             end
           end
@@ -750,7 +750,7 @@ class Game_Player < Game_Character
       for x in 0...$game_map.width
         for y in 0...$game_map.height
           if $game_map.terrain_tag(x, y) == PBTerrain::DeepWater
-            allevents.push(create_fake_connection_event(getMapNoAdd(divemap), x, y))
+            allevents.push(create_fake_connection_event($MapFactory.getMapNoAdd(divemap), x, y))
           end
         end
       end
