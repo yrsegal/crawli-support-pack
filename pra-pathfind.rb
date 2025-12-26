@@ -722,35 +722,37 @@ class Game_Player < Game_Character
       end
     end
 
-    if $PokemonGlobal.diving
-      unless DIVINGSURFACEANYWHERE
-        divemap = nil
-        for i in 0...$cache.mapdata.length
-          if $cache.mapdata[i] && $cache.mapdata[i].DiveMap
-            if $cache.mapdata[i].DiveMap == $game_map.map_id
-              divemap = i
-              break
+    if $DEBUG || (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE])
+      if $PokemonGlobal.diving
+        unless DIVINGSURFACEANYWHERE
+          divemap = nil
+          for i in 0...$cache.mapdata.length
+            if $cache.mapdata[i] && $cache.mapdata[i].DiveMap
+              if $cache.mapdata[i].DiveMap == $game_map.map_id
+                divemap = i
+                break
+              end
             end
           end
-        end
 
-        if divemap
-          for x in 0...$game_map.width
-            for y in 0...$game_map.height
-              if $MapFactory.getTerrainTag(divemap, x, y) == PBTerrain::DeepWater
-                allevents.push(create_fake_connection_event($MapFactory.getMapNoAdd(divemap), x, y))
+          if divemap
+            for x in 0...$game_map.width
+              for y in 0...$game_map.height
+                if $MapFactory.getTerrainTag(divemap, x, y) == PBTerrain::DeepWater
+                  allevents.push(create_fake_connection_event($MapFactory.getMapNoAdd(divemap), x, y))
+                end
               end
             end
           end
         end
-      end
-    elsif $cache.mapdata[$game_map.map_id].DiveMap
-      divemap=$cache.mapdata[$game_map.map_id].DiveMap
+      elsif $cache.mapdata[$game_map.map_id].DiveMap
+        divemap=$cache.mapdata[$game_map.map_id].DiveMap
 
-      for x in 0...$game_map.width
-        for y in 0...$game_map.height
-          if $game_map.terrain_tag(x, y) == PBTerrain::DeepWater
-            allevents.push(create_fake_connection_event($MapFactory.getMapNoAdd(divemap), x, y))
+        for x in 0...$game_map.width
+          for y in 0...$game_map.height
+            if $game_map.terrain_tag(x, y) == PBTerrain::DeepWater
+              allevents.push(create_fake_connection_event($MapFactory.getMapNoAdd(divemap), x, y))
+            end
           end
         end
       end
