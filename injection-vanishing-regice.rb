@@ -2,7 +2,7 @@
  [148, [50]],
  [172, [14, 44]]].each { |mapid, evts|
   evts.each { |evtid|
-    InjectionHelper.defineMapPatch(mapid, evtid) { |map|
+    InjectionHelper.defineMapPatch(mapid, evtid) { |event|
       event.patch(:regicevanish) { |page|
         matched = page.lookForAll([:ControlSwitch, 93, true])
 
