@@ -97,6 +97,17 @@ InjectionHelper.defineMapPatch(33, 55) { |event|
   }
 }
 
+InjectionHelper.defineMapPatch(33) { |map|
+  map.createSinglePageEvent(0, 0, "risathrougher") { |page|
+    page.runInParallel(
+      :Loop,
+        [:Script, '$game_map.events[13].through = true'],
+        [:Script, '$game_map.events[55].through = true'],
+        [:Wait, 20],
+      :Done)
+  }
+}
+
 InjectionHelper.defineMapPatch(33, 65) { |event|
   event.patch(:informrisastopped) { |page|
     matched = page.lookForSequence([:ControlVariable, 684, :[]=, :Constant, 61])
