@@ -80,7 +80,21 @@ InjectionHelper.defineMapPatch(144, 33) { |event|
 }
 
 InjectionHelper.defineMapPatch(33, 13) { |event|
-  event.newPage {}
+  event.newPage { |page|
+    page.setGraphic("trchar252_7")
+    page.through = true
+  }
+}
+
+InjectionHelper.defineMapPatch(33, 55) { |event|
+  event.newPage { |page|
+    page.setGraphic("trchar252_7")
+    page.through = true
+  }
+
+  event.newPage { |page|
+    page.requiresVariable(684, 67)
+  }
 }
 
 InjectionHelper.defineMapPatch(33, 65) { |event|
