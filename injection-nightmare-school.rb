@@ -38,18 +38,19 @@ InjectionHelper.defineMapPatch(99, 44) { |event|
       jumptarget = page.lookForSequence([:PlaySoundEvent, 'SFX - Complete!'])
 
       if choices && jumptarget
-        choices[1].parameters[0].push("Skip Puzzle")
-        page.insertBefore(choices[4],
-          [:When, 2, "Skip Puzzle"],
-            [:ShowText, "Do you want to skip this puzzle completely?"],
-            [:ShowChoices, ["No", "Yes"], 1],
-            [:When, 0, "No"],
-              :ExitEventProcessing,
-            :Done,
-            [:When, 1, "Yes"],
-              [:JumpToLabel, 'skippuzzle'],
-            :Done,
-          :Done)
+        page.insertAfter(choices[2], [:JumpToLabel, 'skippuzzle'])
+        # choices[1].parameters[0].push("Skip Puzzle")
+        # page.insertBefore(choices[4],
+        #   [:When, 2, "Skip Puzzle"],
+        #     [:ShowText, "Do you want to skip this puzzle completely?"],
+        #     [:ShowChoices, ["No", "Yes"], 1],
+        #     [:When, 0, "No"],
+        #       :ExitEventProcessing,
+        #     :Done,
+        #     [:When, 1, "Yes"],
+        #       [:JumpToLabel, 'skippuzzle'],
+        #     :Done,
+        #   :Done)
 
         page.insertBefore(jumptarget, [:Label, 'skippuzzle'])
       end
