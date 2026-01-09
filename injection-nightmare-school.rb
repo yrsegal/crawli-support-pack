@@ -27,31 +27,33 @@ InjectionHelper.defineMapPatch(99, 44) { |event|
 
 [3, 8, 11, 17].each { |evtid|
   InjectionHelper.defineMapPatch(160, evtid) { |event|
-    choices = page.lookForSequence(
-      [:ShowText, "Use the terminal?"],
-      [:ShowChoices, ["Yes", "No"], 2],
-      [:When, 0, "Yes"],
-      [:When, 1, "No"],
-      :BranchEndChoices)
+    event.patch(:puzzleskip) { |page|
+      choices = page.lookForSequence(
+        [:ShowText, "Use the terminal?"],
+        [:ShowChoices, ["Yes", "No"], 2],
+        [:When, 0, "Yes"],
+        [:When, 1, "No"],
+        :BranchEndChoices)
 
-    jumptarget = page.lookForSequence([:PlaySoundEvent, 'SFX - Complete!'])
+      jumptarget = page.lookForSequence([:PlaySoundEvent, 'SFX - Complete!'])
 
-    if choices && jumptarget
-      choices[1].parameters[0].push("Skip Puzzle")
-      page.insertBefore(choices[4],
-        [:When, 2, "Skip Puzzle"],
-          [:ShowText, "Do you want to skip this puzzle completely?"],
-          [:ShowChoices, ["No", "Yes"], 1],
-          [:When, 0, "No"],
-            :ExitEventProcessing,
-          :Done,
-          [:When, 1, "Yes"],
-            [:JumpToLabel, 'skippuzzle'],
-          :Done,
-        :Done)
+      if choices && jumptarget
+        choices[1].parameters[0].push("Skip Puzzle")
+        page.insertBefore(choices[4],
+          [:When, 2, "Skip Puzzle"],
+            [:ShowText, "Do you want to skip this puzzle completely?"],
+            [:ShowChoices, ["No", "Yes"], 1],
+            [:When, 0, "No"],
+              :ExitEventProcessing,
+            :Done,
+            [:When, 1, "Yes"],
+              [:JumpToLabel, 'skippuzzle'],
+            :Done,
+          :Done)
 
-      page.insertBefore(jumptarget, [:Label, 'skippuzzle'])
-    end
+        page.insertBefore(jumptarget, [:Label, 'skippuzzle'])
+      end
+    }
   }
 }
 
