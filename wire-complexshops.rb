@@ -14,6 +14,7 @@ Switches[:CinccinoCrest] = 1773
 Switches[:DelcattyCrest] = 1775
 
 Switches[:Gym_13] = 295
+Switches[:Gym_15] = 297
 
 Variables[:QuestLuckPoison] = 808
 
