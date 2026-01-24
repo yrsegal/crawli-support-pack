@@ -722,7 +722,7 @@ class Game_Player < Game_Character
       end
     end
 
-    if $DEBUG || (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE])
+    if $DEBUG || ($Trainer && (HIDDENMOVESCOUNTBADGES ? $Trainer.numbadges>=BADGEFORDIVE : $Trainer.badges[BADGEFORDIVE]))
       if $PokemonGlobal.diving
         unless DIVINGSURFACEANYWHERE
           divemap = nil
