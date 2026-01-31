@@ -11,7 +11,8 @@ InjectionHelper.defineMapPatch(455, 3) { |event|
 }
 
 [11, 12, 92, 93, 94].each { |i|
-  InjectionHelper.defineMapPatch(449, i, 0) { |page|
-    page.changeTrigger(:Interact)
+  InjectionHelper.defineMapPatch(449, i) { |evt|
+    evt.name = "Battle"
+    evt.pages[0].changeTrigger(:Interact)
   }
 }
