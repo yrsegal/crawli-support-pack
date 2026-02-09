@@ -21,7 +21,7 @@ InjectionHelper.defineMapPatch(323, 52) { |event|
               [55, 44, 60, :Up], [61, 50, 61, :Up]].map { |shard, targetX, targetY| 
               [:SetEventLocation, shard, :Constant, targetX, targetY, :Down] 
             },
-            [:ConditionalBranch, :Variable, 96, :Constant, :>=, 66],
+            [:ConditionalBranch, :Variable, 96, :Constant, 66, :>=],
               [:SetEventLocation, 50, :Constant, 48, 65, :Right],
             :Else,
               [:SetEventLocation, 50, :Constant, 48, 65, :Down],

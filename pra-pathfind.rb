@@ -92,6 +92,8 @@ class Game_Player < Game_Character
     end
   end
 
+  attr_accessor :selected_event_index
+
   alias_method :access_mod_original_initialize, :initialize
   def initialize(*args)
     # Call the original initialize method first to set up the player
@@ -332,6 +334,57 @@ class Game_Player < Game_Character
     end
     return false
   end
+
+  def is_path_conveyor_passable?(x, y, d)
+    # Get the coordinates of the tile we are trying to move to
+    new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
+    new_y = y + (d == 2 ? 1 : d == 8 ? -1 : 0)
+    return false unless self.map.valid?(new_x, new_y)
+
+    # Handle jumps
+    for event in $game_map.events.values
+      if event.x == new_x && event.y == new_y && is_jump_event?(event, d)
+        return false
+      end
+    end
+    
+    # Get the terrain tag of the destination tile
+    terrain_tag = self.map.terrain_tag(new_x, new_y)
+    
+    if terrain_tag == PBTerrain::DownConveyor
+      return d == 8 && passable?(new_x, new_y, d)
+    elsif terrain_tag == PBTerrain::LeftConveyor
+      return d == 6 && passable?(new_x, new_y, d)
+    elsif terrain_tag == PBTerrain::RightConveyor
+      return d == 4 && passable?(new_x, new_y, d)
+    elsif terrain_tag == PBTerrain::UpConveyor
+      return d == 2 && passable?(new_x, new_y, d)
+    end
+    return false
+  end
+
+  def follow_conveyor_to_node(x, y, d)
+    new_x = x + (d == 6 ? 1 : d == 4 ? -1 : 0)
+    new_y = y + (d == 2 ? 1 : d == 8 ? -1 : 0)
+
+    terrain_tag = self.map.terrain_tag(new_x, new_y)
+    traced = [[x, y]]
+
+    while [PBTerrain::DownConveyor, PBTerrain::LeftConveyor, PBTerrain::RightConveyor, PBTerrain::UpConveyor].include?(terrain_tag)
+      x = new_x
+      y = new_y
+
+      return nil if traced.include?([new_x, new_y])
+      traced.push([new_x, new_y])
+
+      new_x = x + (terrain_tag == PBTerrain::RightConveyor ? 1 : terrain_tag == PBTerrain::LeftConveyor ? -1 : 0)
+      new_y = y + (terrain_tag == PBTerrain::DownConveyor ? 1 : terrain_tag == PBTerrain::UpConveyor ? -1 : 0)
+      terrain_tag = self.map.terrain_tag(new_x, new_y)
+    end
+
+    return Node.new(new_x, new_y)
+  end
+
 
   def is_sign_event?(event)
     return false if !event || !event.list || (!event.character_name.empty? && event.tile_id < 384)
@@ -1090,10 +1143,15 @@ class Game_Player < Game_Character
     offsetx, offsety =  1,  0 if dir == 6
     offsetx, offsety =  0, -1 if dir == 8
 
-    if is_path_passable?(node.x, node.y, dir) || (target && target.equals(Node.new(node.x + offsetx, node.y + offsety)))
-      neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
-    elsif is_path_ledge_passable?(node.x, node.y, dir)
-      neighbors.push(Node.new(node.x + offsetx * 2, node.y + offsety * 2))
+    if is_path_conveyor_passable?(node.x, node.y, dir)
+      follow = follow_conveyor_to_node(node.x, node.y, dir)
+      neighbors.push(follow) if follow
+    else
+      if is_path_passable?(node.x, node.y, dir) || (target && target.equals(Node.new(node.x + offsetx, node.y + offsety)))
+        neighbors.push(Node.new(node.x + offsetx, node.y + offsety))
+      elsif is_path_ledge_passable?(node.x, node.y, dir)
+        neighbors.push(Node.new(node.x + offsetx * 2, node.y + offsety * 2))
+      end
     end
   end
 
