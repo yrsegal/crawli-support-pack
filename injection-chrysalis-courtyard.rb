@@ -1,5 +1,5 @@
 InjectionHelper.defineMapPatch(391) { |map|
-  map.createSinglePageEvent(22, 49, "Accessibility Helper Maze") { |page|
+  map.createSinglePageEvent(24, 54, "Accessibility Helper Maze") { |page|
     page.setGraphic("NPC 31")
     page.requiresVariable(679, 1)
 
